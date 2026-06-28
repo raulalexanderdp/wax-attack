@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>WAX ATTACK — DJ Arcade</title>
+<style>
+:root {
+  --neon-pink: #ff2e9a;
+  --neon-cyan: #1ff0ff;
+  --neon-orange: #ff9b3d;
+  --bg: #0a0410;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: radial-gradient(circle at 50% 0%, #2a0f1a 0%, var(--bg) 70%);
+  color: #fff;
+  font-family: "Courier New", monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+#cabinet { text-align: center; }
+
+#marquee {
+  margin-top: 14px;
+  font-size: 26px;
+  letter-spacing: 6px;
+  font-weight: bold;
+  color: var(--neon-orange);
+  text-shadow: 0 0 8px var(--neon-orange), 0 0 18px var(--neon-pink);
+  animation: flicker 4s infinite;
+}
+
+#hint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #ffb37a;
+  opacity: 0.85;
+}
+
+#screen {
+  position: relative;
+  width: min(540px, 96vw);
+  max-height: 86vh;
+  aspect-ratio: 540 / 720;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 8px #1a0c14,
+    0 0 0 14px #4f1f2a,
+    0 0 60px rgba(255, 155, 61, 0.35),
+    0 0 120px rgba(255, 46, 154, 0.2);
+}
+
+canvas#game {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #0a0410;
+  touch-action: none;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px
+  );
+  mix-blend-mode: multiply;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.6; }
+  94% { opacity: 1; }
+  97% { opacity: 0.7; }
+  98% { opacity: 1; }
+}
+
+@media (max-width: 560px) {
+  #marquee { font-size: 20px; letter-spacing: 4px; margin-top: 10px; }
+  #hint { font-size: 10px; }
+}
+
+</style>
+</head>
+<body>
+  <div id="cabinet">
+    <div id="screen">
+      <canvas id="game" width="540" height="720"></canvas>
+      <div class="scanlines"></div>
+      <div class="vignette"></div>
+    </div>
+    <div id="marquee">W A X &nbsp; A T T A C K</div>
+    <p id="hint">Climb the tower · dodge the bass barrels · sling vinyl at DJ KONG</p>
+  </div>
+
+  <script>
+/* ============================================================================
+ * WAX ATTACK — Input abstraction layer
+ * ----------------------------------------------------------------------------
+ * The game reads only ABSTRACT ACTIONS, never a raw device:
+ *
+ *     LEFT RIGHT UP DOWN   — run + climb (joystick / arrows / touch D-pad)
+ *     JUMP                  — hop over barrels        (button)
+ *     THROW                 — sling a vinyl record    (button)
+ *     START                 — start / confirm
+ *
+ * Three input paths feed those actions: keyboard (what DIY arcade encoders
+ * emit), gamepad/joystick (Gamepad API, sticks + buttons), and touch (on-screen
+ * D-pad + action buttons). Remap by editing DEFAULT_MAP. The on-screen touch
+ * zones are exposed via touchZones() so the game can draw matching buttons.
+ * ========================================================================== */
+
+const Input = (() => {
+  const DEFAULT_MAP = {
+    keyboard: {
+      LEFT:  ['ArrowLeft', 'KeyA'],
+      RIGHT: ['ArrowRight', 'KeyD'],
+      UP:    ['ArrowUp', 'KeyW'],
+      DOWN:  ['ArrowDown', 'KeyS'],
+      JUMP:  ['Space', 'KeyK'],
+      THROW: ['KeyJ', 'KeyF', 'ShiftLeft'],
+      START: ['Enter', 'Digit1', 'Digit5'],
+    },
+    gamepad: {
+      LEFT: [14], RIGHT: [15], UP: [12], DOWN: [13],
+      JUMP: [0, 1], THROW: [2, 3], START: [9, 8],
+      MOVE_AXIS_X: 0, MOVE_AXIS_Y: 1,
+    },
+  };
+  let map = JSON.parse(JSON.stringify(DEFAULT_MAP));
+
+  // --- Canvas geometry & touch zones (canvas-internal 540x720 coords) -------
+  const VW = 540, VH = 720;
+  const TOUCH_ZONES = {
+    // D-pad, bottom-left
+    UP:    { x0: 78,  y0: 560, x1: 150, y1: 612, label: '▲' },
+    DOWN:  { x0: 78,  y0: 666, x1: 150, y1: 718, label: '▼' },
+    LEFT:  { x0: 20,  y0: 613, x1: 76,  y1: 665, label: '◄' },
+    RIGHT: { x0: 152, y0: 613, x1: 208, y1: 665, label: '►' },
+    // action buttons, bottom-right
+    JUMP:  { x0: 322, y0: 628, x1: 404, y1: 710, label: 'JUMP', round: true },
+    THROW: { x0: 430, y0: 628, x1: 512, y1: 710, label: 'DISC', round: true },
+  };
+
+  const ACTIONS = ['LEFT', 'RIGHT', 'UP', 'DOWN', 'JUMP', 'THROW', 'START'];
+  const down = {}, pressed = {}, prevDown = {};
+  ACTIONS.forEach(a => { down[a] = false; pressed[a] = false; prevDown[a] = false; });
+
+  // --- Keyboard -------------------------------------------------------------
+  const keyDown = new Set();
+  window.addEventListener('keydown', (e) => {
+    if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
+    firstGesture();
+    keyDown.add(e.code);
+  });
+  window.addEventListener('keyup', (e) => keyDown.delete(e.code));
+  window.addEventListener('blur', () => keyDown.clear());
+
+  // --- Gamepad --------------------------------------------------------------
+  let gamepadIndex = null;
+  window.addEventListener('gamepadconnected', (e) => { gamepadIndex = e.gamepad.index; });
+  window.addEventListener('gamepaddisconnected', () => { gamepadIndex = null; });
+  function pollGamepad() {
+    if (gamepadIndex === null || !navigator.getGamepads) return null;
+    return navigator.getGamepads()[gamepadIndex] || null;
+  }
+
+  // --- Touch / pointer ------------------------------------------------------
+  let touchMode = 'menu';            // 'menu' | 'play'
+  let usingTouch = false;
+  let canvasEl = null;
+  const pointers = new Map();        // id -> { action } for held D-pad/buttons
+  const touchLatch = {};             // edge actions (JUMP/THROW) tapped this frame
+  ACTIONS.forEach(a => { touchLatch[a] = false; });
+  let pendingTap = null;
+
+  let gestureFired = false;
+  function firstGesture() {
+    if (gestureFired) return;
+    gestureFired = true;
+    if (window.AudioEngine) { try { AudioEngine.init(); AudioEngine.resume(); } catch (e) {} }
+  }
+
+  function toCanvas(clientX, clientY) {
+    if (!canvasEl) return { x: 0, y: 0 };
+    const r = canvasEl.getBoundingClientRect();
+    return { x: (clientX - r.left) * (VW / r.width), y: (clientY - r.top) * (VH / r.height) };
+  }
+
+  function zoneAt(x, y) {
+    for (const action of Object.keys(TOUCH_ZONES)) {
+      const z = TOUCH_ZONES[action];
+      if (x >= z.x0 && x <= z.x1 && y >= z.y0 && y <= z.y1) return action;
+    }
+    return null;
+  }
+
+  function bindPointer(el) {
+    canvasEl = el;
+    const opts = { passive: false };
+
+    el.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      if (e.pointerType === 'touch') usingTouch = true;
+      firstGesture();
+      try { el.setPointerCapture(e.pointerId); } catch (_) {}
+      const p = toCanvas(e.clientX, e.clientY);
+
+      if (touchMode === 'play') {
+        const action = zoneAt(p.x, p.y);
+        if (action) {
+          pointers.set(e.pointerId, { action });
+          if (action === 'JUMP' || action === 'THROW') touchLatch[action] = true;
+        } else {
+          pointers.set(e.pointerId, { action: null });
+        }
+      } else {
+        pendingTap = p;
+        pointers.set(e.pointerId, { action: null });
+      }
+    }, opts);
+
+    el.addEventListener('pointermove', (e) => {
+      const ptr = pointers.get(e.pointerId);
+      if (!ptr || touchMode !== 'play') return;
+      e.preventDefault();
+      const p = toCanvas(e.clientX, e.clientY);
+      const action = zoneAt(p.x, p.y);
+      // sliding off a held D-pad button releases it; sliding onto another holds it
+      if (action && (action !== 'JUMP' && action !== 'THROW')) ptr.action = action;
+      else if (!action) ptr.action = null;
+    }, opts);
+
+    const release = (e) => { pointers.delete(e.pointerId); };
+    el.addEventListener('pointerup', release);
+    el.addEventListener('pointercancel', release);
+    el.addEventListener('lostpointercapture', release);
+  }
+
+  function touchHeld(action) {
+    for (const ptr of pointers.values()) if (ptr.action === action) return true;
+    return false;
+  }
+
+  // --- Per-frame update -----------------------------------------------------
+  function update() {
+    const gp = pollGamepad();
+    const ax = gp ? (gp.axes[map.gamepad.MOVE_AXIS_X] || 0) : 0;
+    const ay = gp ? (gp.axes[map.gamepad.MOVE_AXIS_Y] || 0) : 0;
+
+    for (const action of ACTIONS) {
+      let isDown = false;
+
+      const codes = map.keyboard[action] || [];
+      for (const c of codes) { if (keyDown.has(c)) { isDown = true; break; } }
+
+      if (!isDown && gp) {
+        const idxs = map.gamepad[action] || [];
+        for (const i of idxs) { if (gp.buttons[i] && gp.buttons[i].pressed) { isDown = true; break; } }
+        // analog stick -> directions
+        if (!isDown) {
+          if (action === 'LEFT' && ax < -0.4) isDown = true;
+          if (action === 'RIGHT' && ax > 0.4) isDown = true;
+          if (action === 'UP' && ay < -0.4) isDown = true;
+          if (action === 'DOWN' && ay > 0.4) isDown = true;
+        }
+      }
+
+      if (!isDown && touchMode === 'play' && touchHeld(action)) isDown = true;
+
+      prevDown[action] = down[action];
+      down[action] = isDown;
+      pressed[action] = (isDown && !prevDown[action]) || touchLatch[action];
+      touchLatch[action] = false;
+    }
+  }
+
+  return {
+    update,
+    bindTouch: bindPointer,
+    setTouchMode: (m) => { touchMode = m; },
+    consumeTap: () => { const t = pendingTap; pendingTap = null; return t; },
+    isTouch: () => usingTouch,
+    isDown: (a) => !!down[a],
+    justPressed: (a) => !!pressed[a],
+    hasGamepad: () => gamepadIndex !== null,
+    touchZones: () => TOUCH_ZONES,
+    setMap: (m) => { map = Object.assign(JSON.parse(JSON.stringify(DEFAULT_MAP)), m); },
+    ACTIONS,
+  };
+})();
+
+</script>
+  <script>
+/* ============================================================================
+ * WAX ATTACK — Chiptune audio engine
+ * ----------------------------------------------------------------------------
+ * Everything is synthesized with the Web Audio API (no asset files):
+ *   - a looping 4-bar chiptune (square lead arpeggios over a I-vi-IV-V
+ *     progression, triangle bass, noise drums), tempo ramps per level
+ *   - a full SFX kit (jump, land, throw, smash, bounce, hurt, stun, coin,
+ *     1-up, stage-clear & game-over jingles, Kong roar, countdown)
+ *
+ * The lead/bass/drums use a sample-accurate look-ahead scheduler; SFX schedule
+ * directly against the audio clock for tight timing.
+ * ========================================================================== */
+
+const AudioEngine = (() => {
+  let ctx = null, master = null, musicGain = null;
+  let bpm = 132, spb = 0.4545;
+  let look = null, step = 0, stepTime = 0, playing = false;
+  const AHEAD = 0.12, TICK = 25;
+
+  // --- 4-bar song (chords C / Am / F / G) -----------------------------------
+  // Lead arpeggio per bar, 8 eighth-notes (even 16th steps).
+  const LEAD = [
+    [72, 76, 79, 84, 79, 76, 79, 84], // C
+    [69, 72, 76, 81, 76, 72, 76, 81], // Am
+    [65, 69, 72, 77, 72, 69, 72, 77], // F
+    [67, 71, 74, 79, 74, 71, 74, 79], // G
+  ];
+  const BASS_ROOT = [36, 33, 29, 31]; // C2 A1 F1 G1
+
+  function init() {
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createDynamicsCompressor();
+    master.threshold.value = -12; master.ratio.value = 5;
+    const out = ctx.createGain(); out.gain.value = 0.8;
+    master.connect(out).connect(ctx.destination);
+    musicGain = ctx.createGain(); musicGain.gain.value = 0.9;
+    musicGain.connect(master);
+  }
+  function resume() { if (ctx && ctx.state === 'suspended') ctx.resume(); }
+  function midi(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+
+  function noise(dur) {
+    const len = Math.floor(ctx.sampleRate * dur);
+    const b = ctx.createBuffer(1, len, ctx.sampleRate);
+    const d = b.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    return b;
+  }
+
+  // --- Music voices ---------------------------------------------------------
+  function lead(t, freq, dur) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'square'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0, t);
+    g.gain.linearRampToValueAtTime(0.16, t + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(g).connect(musicGain); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function bass(t, freq, dur) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'triangle'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0, t);
+    g.gain.linearRampToValueAtTime(0.5, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(g).connect(musicGain); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function dKick(t) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.setValueAtTime(140, t);
+    o.frequency.exponentialRampToValueAtTime(48, t + 0.1);
+    g.gain.setValueAtTime(0.8, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+    o.connect(g).connect(musicGain); o.start(t); o.stop(t + 0.24);
+  }
+  function dSnare(t) {
+    const s = ctx.createBufferSource(); s.buffer = noise(0.16);
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1700;
+    const g = ctx.createGain(); g.gain.setValueAtTime(0.4, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+    s.connect(bp).connect(g).connect(musicGain); s.start(t); s.stop(t + 0.16);
+  }
+  function dHat(t) {
+    const s = ctx.createBufferSource(); s.buffer = noise(0.03);
+    const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 8000;
+    const g = ctx.createGain(); g.gain.setValueAtTime(0.18, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+    s.connect(hp).connect(g).connect(musicGain); s.start(t); s.stop(t + 0.05);
+  }
+
+  function scheduleStep(globalStep, t) {
+    const s = ((globalStep % 16) + 16) % 16;
+    const bar = Math.floor(globalStep / 16) % 4;
+    // drums
+    if (s === 0 || s === 8) dKick(t);
+    if (s === 4 || s === 12) dSnare(t);
+    if (s % 2 === 0) dHat(t);
+    // lead + bass on eighths
+    if (s % 2 === 0) {
+      const e = s / 2;
+      lead(t, midi(LEAD[bar][e]), spb * 0.42);
+      const oct = (e % 2 === 0) ? 0 : 12;
+      bass(t, midi(BASS_ROOT[bar] + oct), spb * 0.45);
+    }
+  }
+  function tick() {
+    const stepDur = spb / 4;
+    while (stepTime < ctx.currentTime + AHEAD) {
+      scheduleStep(step, stepTime); step++; stepTime += stepDur;
+    }
+  }
+  function startMusic(level) {
+    init(); resume();
+    bpm = 132 + (level - 1) * 6; spb = 60 / bpm;
+    step = 0; stepTime = ctx.currentTime + 0.08; playing = true;
+    clearInterval(look); look = setInterval(tick, TICK);
+  }
+  function stopMusic() { playing = false; clearInterval(look); look = null; }
+
+  // --- SFX primitives -------------------------------------------------------
+  function tone(type, f0, f1, dur, gain, dest) {
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(f0, t);
+    if (f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+    g.gain.setValueAtTime(gain, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(g).connect(dest || master); o.start(t); o.stop(t + dur + 0.02);
+  }
+  // sequence of [midi, durSeconds, type?] played back-to-back
+  function seq(notes, gain = 0.2, type = 'square') {
+    if (!ctx) return;
+    let t = ctx.currentTime;
+    for (const n of notes) {
+      const [m, dur, ty] = n;
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = ty || type; o.frequency.value = midi(m);
+      g.gain.setValueAtTime(0.0, t);
+      g.gain.linearRampToValueAtTime(gain, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur * 0.95);
+      o.connect(g).connect(master); o.start(t); o.stop(t + dur);
+      t += dur;
+    }
+  }
+
+  // --- SFX kit --------------------------------------------------------------
+  const jump  = () => tone('square', 380, 760, 0.16, 0.2);
+  const land  = () => { tone('triangle', 200, 90, 0.08, 0.2); };
+  const bounce = () => tone('square', 500, 800, 0.07, 0.12);
+  const climb = () => tone('triangle', 220, 280, 0.05, 0.07);
+  const coin  = () => seq([[83, 0.07], [90, 0.14]], 0.18, 'square');
+  const oneUp = () => seq([[76, 0.09], [81, 0.09], [84, 0.09], [88, 0.18]], 0.18, 'square');
+  const stun  = () => { tone('sawtooth', 300, 140, 0.4, 0.22); tone('square', 320, 150, 0.4, 0.12); };
+  const hurt  = () => seq([[60, 0.1], [55, 0.1], [48, 0.25]], 0.28, 'sawtooth');
+  const stageClear = () => seq([[72, 0.12], [76, 0.12], [79, 0.12], [84, 0.12], [88, 0.3]], 0.22, 'square');
+  const gameOver = () => seq([[72, 0.18], [68, 0.18], [64, 0.18], [60, 0.5]], 0.25, 'square');
+
+  function throwDisc() {
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const s = ctx.createBufferSource(); s.buffer = noise(0.16);
+    s.playbackRate.setValueAtTime(1.7, t);
+    s.playbackRate.exponentialRampToValueAtTime(0.6, t + 0.14);
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1400; bp.Q.value = 5;
+    const g = ctx.createGain(); g.gain.setValueAtTime(0.28, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+    s.connect(bp).connect(g).connect(master); s.start(t); s.stop(t + 0.16);
+  }
+  function smash() {
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const s = ctx.createBufferSource(); s.buffer = noise(0.2);
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
+    const g = ctx.createGain(); g.gain.setValueAtTime(0.4, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+    s.connect(lp).connect(g).connect(master); s.start(t); s.stop(t + 0.2);
+    tone('square', 220, 70, 0.14, 0.18);
+  }
+  function kongRoar() {
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(95, t); o.frequency.linearRampToValueAtTime(58, t + 0.35);
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 480;
+    g.gain.setValueAtTime(0.0, t); g.gain.linearRampToValueAtTime(0.32, t + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+    o.connect(lp).connect(g).connect(master); o.start(t); o.stop(t + 0.42);
+  }
+  const beep = () => tone('square', 660, 660, 0.1, 0.18);
+  const go   = () => tone('square', 880, 1320, 0.22, 0.22);
+
+  return {
+    init, resume, startMusic, stopMusic,
+    jump, land, bounce, climb, coin, oneUp, stun, hurt, stageClear, gameOver,
+    throwDisc, smash, kongRoar, beep, go,
+    get playing() { return playing; },
+    get context() { return ctx; },
+  };
+})();
+
+</script>
+  <script>
+/* ============================================================================
+ * WAX ATTACK — Game (pixel-art edition)
+ * ----------------------------------------------------------------------------
+ * A single-screen arcade climber in the Donkey Kong lineage, DJ-themed.
+ * Rendered into a low-res 270x360 buffer and scaled 2x with no smoothing for a
+ * crisp 8/16-bit look, with a bitmap font, hand-built sprites, and arcade juice
+ * (screen shake, squash & stretch, hit-stop, particles). All input flows
+ * through the Input abstraction layer (keyboard / gamepad / touch).
+ * ========================================================================== */
+
+(() => {
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const SW = canvas.width, SH = canvas.height;         // 540 x 720 (screen)
+  Input.bindTouch(canvas);
+
+  // Low-res render buffer (scaled x2 to the screen).
+  const RW = 270, RH = 360, SCALE = 2;
+  const buf = document.createElement('canvas');
+  buf.width = RW; buf.height = RH;
+  const b = buf.getContext('2d');
+
+  // --- Palette --------------------------------------------------------------
+  const C = {
+    sky0: '#1a0a1e', sky1: '#3a1140', star: '#5a2a6a',
+    girder: '#ff9b3d', girderHi: '#ffd08a', girderLo: '#a8551a', rivet: '#6e3410',
+    ladder: '#3df0ff', ladderLo: '#1899a8',
+    skin: '#ffcf9e', skinLo: '#e0a878', pink: '#ff4fa3', pinkLo: '#c72f7a',
+    cyan: '#45e0ff', dark: '#15151c', pants: '#3a3f5c', white: '#ffffff',
+    fur: '#6b4a7a', furLo: '#4a3550', furHi: '#8a64a0', gold: '#ffe14d', goldLo: '#b88a00',
+    green: '#5dff8f', red: '#ff5566', yellow: '#ffd23d',
+  };
+
+  // --- 3x5 bitmap font ------------------------------------------------------
+  const FONT = {
+    A:['010','101','111','101','101'], B:['110','101','110','101','110'],
+    C:['011','100','100','100','011'], D:['110','101','101','101','110'],
+    E:['111','100','110','100','111'], F:['111','100','110','100','100'],
+    G:['011','100','101','101','011'], H:['101','101','111','101','101'],
+    I:['111','010','010','010','111'], J:['001','001','001','101','010'],
+    K:['101','101','110','101','101'], L:['100','100','100','100','111'],
+    M:['101','111','111','101','101'], N:['101','111','111','111','101'],
+    O:['010','101','101','101','010'], P:['110','101','110','100','100'],
+    Q:['010','101','101','110','011'], R:['110','101','110','101','101'],
+    S:['011','100','010','001','110'], T:['111','010','010','010','010'],
+    U:['101','101','101','101','111'], V:['101','101','101','101','010'],
+    W:['101','101','111','111','101'], X:['101','101','010','101','101'],
+    Y:['101','101','010','010','010'], Z:['111','001','010','100','111'],
+    '0':['111','101','101','101','111'], '1':['010','110','010','010','111'],
+    '2':['110','001','010','100','111'], '3':['110','001','010','001','110'],
+    '4':['101','101','111','001','001'], '5':['111','100','110','001','110'],
+    '6':['011','100','110','101','010'], '7':['111','001','010','010','010'],
+    '8':['010','101','010','101','010'], '9':['010','101','011','001','110'],
+    ' ':['000','000','000','000','000'], '!':['010','010','010','000','010'],
+    '?':['110','001','010','000','010'], '.':['000','000','000','000','010'],
+    ':':['000','010','000','010','000'], '-':['000','000','111','000','000'],
+    '+':['000','010','111','010','000'], '/':['001','001','010','100','100'],
+    "'":['010','010','000','000','000'], '%':['101','001','010','100','101'],
+    '(':['001','010','010','010','001'], ')':['100','010','010','010','100'],
+    ',':['000','000','000','010','100'], '*':['101','010','111','010','101'],
+  };
+  function text(str, x, y, scale, color) {
+    b.fillStyle = color;
+    let cx = x;
+    for (const ch of String(str).toUpperCase()) {
+      const g = FONT[ch] || FONT['?'];
+      for (let r = 0; r < 5; r++) for (let c = 0; c < 3; c++)
+        if (g[r][c] === '1') b.fillRect(cx + c * scale, y + r * scale, scale, scale);
+      cx += 4 * scale;
+    }
+    return cx;
+  }
+  function textW(str, scale) { return String(str).length * 4 * scale; }
+  function textC(str, y, scale, color) { text(str, Math.round((RW - textW(str, scale)) / 2), y, scale, color); }
+
+  // --- Pixel helpers --------------------------------------------------------
+  const px = (x, y, w, h, color) => { b.fillStyle = color; b.fillRect(x | 0, y | 0, w, h); };
+  function disc(cx, cy, r, color) {
+    b.fillStyle = color;
+    for (let y = -r; y <= r; y++) {
+      const xx = Math.floor(Math.sqrt(r * r - y * y));
+      b.fillRect((cx - xx) | 0, (cy + y) | 0, xx * 2 + 1, 1);
+    }
+  }
+  function ring(cx, cy, r, color) {
+    b.fillStyle = color;
+    for (let a = 0; a < 360; a += 12) {
+      const x = cx + Math.cos(a * Math.PI / 180) * r, y = cy + Math.sin(a * Math.PI / 180) * r;
+      b.fillRect(x | 0, y | 0, 1, 1);
+    }
+  }
+
+  // --- Tunables (270x360 space) --------------------------------------------
+  const PW = 11, PH = 16, BR = 7, DISC_R = 5;
+  const GRAVITY = 820, MOVE = 80, CLIMB = 60, JUMP_VEL = 252, DISC_SPEED = 210;
+  const PX0 = 12, PX1 = 258;
+  const ROWS = [
+    { y: 344, dir: -1 }, { y: 290, dir: 1 }, { y: 236, dir: -1 },
+    { y: 182, dir: 1 }, { y: 128, dir: -1 }, { y: 78, dir: 1 },
+  ];
+  const LADDERS = [
+    { x: 222, top: ROWS[1].y, bottom: ROWS[0].y },
+    { x: 52,  top: ROWS[2].y, bottom: ROWS[1].y },
+    { x: 214, top: ROWS[3].y, bottom: ROWS[2].y },
+    { x: 58,  top: ROWS[4].y, bottom: ROWS[3].y },
+    { x: 208, top: ROWS[5].y, bottom: ROWS[4].y },
+  ];
+  const KONG = { x: 46, y: ROWS[5].y };
+  const GOAL = { x: 230, y: ROWS[5].y - 18, w: 16, h: 18 };
+
+  // --- State ----------------------------------------------------------------
+  const ST = { ATTRACT: 0, INTRO: 1, PLAY: 2, DYING: 3, WIN: 4, GAMEOVER: 5 };
+  let state = ST.ATTRACT;
+  let score = 0, lives = 3, level = 1, bonus = 5000, highScore = 0;
+  let stateTimer = 0, attractTimer = 0, attractMode = 'title';
+  let shake = 0, hitstop = 0, flash = 0;
+  let countShown = -1;
+
+  let player, barrels = [], discs = [], barrelSpeed = 46, spawnInterval = 2;
+  let kong = { throwTimer: 0, throwAnim: 0, stun: 0, beat: 0 };
+  const particles = [], popups = [];
+  const stars = [];
+  for (let i = 0; i < 40; i++) stars.push({ x: Math.random() * RW, y: Math.random() * RH, s: Math.random() < 0.3 ? 2 : 1, t: Math.random() });
+
+  // --- Helpers --------------------------------------------------------------
+  const clamp = (v, a, c) => Math.max(a, Math.min(c, v));
+  const overlap = (ax, ay, aw, ah, bx, by, bw, bh) => ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+  function addShake(m) { shake = Math.max(shake, m); }
+  function burst(x, y, color, n, spd) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, s = (spd || 90) * (0.4 + Math.random());
+      particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 40, life: 0.4 + Math.random() * 0.3, age: 0, color, g: 240 });
+    }
+  }
+  function popup(x, y, t, color) { popups.push({ x, y, t, color, age: 0, life: 0.8 }); }
+  function addScore(n, x, y, color) { score += n; popup(x, y, '+' + n, color || C.white); }
+
+  // --- Level setup ----------------------------------------------------------
+  function buildLevel() {
+    barrelSpeed = 46 + (level - 1) * 7;
+    spawnInterval = Math.max(0.75, 2.1 - (level - 1) * 0.13);
+    bonus = 5000;
+    player = { x: 22, y: ROWS[0].y - PH, vx: 0, vy: 0, face: 1, onGround: true, wasAir: false, climbing: false, ladder: null, throwCd: 0, invuln: 1.2, walk: 0, sx: 1, sy: 1 };
+    barrels = []; discs = [];
+    kong = { throwTimer: 1.2, throwAnim: 0, stun: 0, beat: 0 };
+  }
+  function startGame() { score = 0; lives = 3; level = 1; gotoIntro(); }
+  function gotoIntro() { buildLevel(); state = ST.INTRO; stateTimer = 1.9; countShown = -1; AudioEngine.kongRoar(); }
+  function respawn() {
+    player.x = 22; player.y = ROWS[0].y - PH; player.vx = 0; player.vy = 0;
+    player.climbing = false; player.onGround = true; player.invuln = 1.6; player.face = 1; player.sx = 1; player.sy = 1;
+    barrels = []; discs = []; state = ST.PLAY;
+  }
+
+  // --- Ladder queries -------------------------------------------------------
+  const ladderUp = (cx, feet) => LADDERS.find(L => Math.abs(L.x - cx) < 9 && feet > L.top + 1 && feet <= L.bottom + 6);
+  const ladderDown = (cx, feet) => LADDERS.find(L => Math.abs(L.x - cx) < 9 && Math.abs(feet - L.top) < 7);
+
+  // ==========================================================================
+  // UPDATE
+  // ==========================================================================
+  function update(dt) {
+    Input.update(dt);
+    Input.setTouchMode(state === ST.PLAY || state === ST.DYING ? 'play' : 'menu');
+    shake = Math.max(0, shake - dt * 30);
+    flash = Math.max(0, flash - dt * 4);
+
+    if (hitstop > 0) { hitstop -= dt; ageFx(dt); return; }
+
+    if (state === ST.ATTRACT) updateAttract(dt);
+    else if (state === ST.INTRO) updateIntro(dt);
+    else if (state === ST.PLAY) updatePlay(dt);
+    else if (state === ST.DYING) {
+      stateTimer -= dt; updateBarrels(dt); updateDiscs(dt); updateKong(dt);
+      if (stateTimer <= 0) {
+        if (lives > 0) respawn();
+        else { state = ST.GAMEOVER; AudioEngine.stopMusic(); AudioEngine.gameOver(); highScore = Math.max(highScore, score); }
+      }
+    } else if (state === ST.WIN) {
+      stateTimer -= dt;
+      if (stateTimer <= 0) { level++; gotoIntro(); }
+    } else if (state === ST.GAMEOVER) {
+      if (Input.justPressed('START') || Input.justPressed('JUMP') || Input.consumeTap()) { state = ST.ATTRACT; attractMode = 'title'; attractTimer = 0; }
+    }
+    ageFx(dt);
+  }
+
+  function ageFx(dt) {
+    for (const p of particles) { p.age += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += p.g * dt; }
+    for (let i = particles.length - 1; i >= 0; i--) if (particles[i].age > particles[i].life) particles.splice(i, 1);
+    for (const u of popups) { u.age += dt; u.y -= 22 * dt; }
+    for (let i = popups.length - 1; i >= 0; i--) if (popups[i].age > popups[i].life) popups.splice(i, 1);
+    for (const s of stars) { s.t += dt; }
+  }
+
+  function updateAttract(dt) {
+    attractTimer += dt;
+    kong.beat += dt * 4;
+    if (attractMode === 'title' && attractTimer > 5) { attractMode = 'howto'; attractTimer = 0; }
+    else if (attractMode === 'howto' && attractTimer > 7) { attractMode = 'title'; attractTimer = 0; }
+    if (Input.justPressed('START') || Input.justPressed('JUMP') || Input.consumeTap()) {
+      AudioEngine.init(); AudioEngine.resume(); startGame();
+    }
+  }
+
+  function updateIntro(dt) {
+    stateTimer -= dt;
+    const n = Math.ceil(stateTimer - 0.4);
+    if (n !== countShown && n >= 1 && n <= 2) { countShown = n; AudioEngine.beep(); }
+    if (stateTimer <= 0) { AudioEngine.go(); state = ST.PLAY; AudioEngine.startMusic(level); }
+    kong.beat += dt * 4;
+  }
+
+  function updatePlay(dt) {
+    const left = Input.isDown('LEFT'), right = Input.isDown('RIGHT');
+    const up = Input.isDown('UP'), downk = Input.isDown('DOWN');
+    player.invuln = Math.max(0, player.invuln - dt);
+    player.throwCd -= dt;
+    bonus = Math.max(0, bonus - 130 * dt);
+    player.sx += (1 - player.sx) * Math.min(1, dt * 12);
+    player.sy += (1 - player.sy) * Math.min(1, dt * 12);
+
+    const cx = player.x + PW / 2, feet = player.y + PH;
+
+    if (Input.justPressed('THROW') && player.throwCd <= 0) {
+      discs.push({ x: cx + player.face * 6, y: player.y + 6, vx: player.face * DISC_SPEED, rot: 0, life: 2.2, dead: false });
+      player.throwCd = 0.32; AudioEngine.throwDisc();
+      player.sx = 1.25; player.sy = 0.8;
+    }
+
+    if (!player.climbing) {
+      if (up) { const L = ladderUp(cx, feet); if (L) { player.climbing = true; player.ladder = L; player.onGround = false; AudioEngine.climb(); } }
+      else if (downk) { const L = ladderDown(cx, feet); if (L) { player.climbing = true; player.ladder = L; player.onGround = false; } }
+    }
+
+    if (player.climbing) {
+      const L = player.ladder;
+      player.x = L.x - PW / 2; player.vx = 0; player.vy = 0;
+      let vy = 0;
+      if (up) vy = -CLIMB; else if (downk) vy = CLIMB;
+      player.y += vy * dt;
+      if (vy !== 0) player.walk += dt * 9;
+      if (Input.justPressed('JUMP')) { player.climbing = false; player.vy = -JUMP_VEL * 0.8; player.onGround = false; AudioEngine.jump(); }
+      else {
+        const ft = player.y + PH;
+        if (ft <= L.top) { player.y = L.top - PH; player.climbing = false; player.onGround = true; }
+        else if (ft >= L.bottom) { player.y = L.bottom - PH; player.climbing = false; player.onGround = true; }
+      }
+    } else {
+      player.vx = (right ? MOVE : 0) - (left ? MOVE : 0);
+      if (player.vx !== 0) { player.face = player.vx > 0 ? 1 : -1; player.walk += dt * 11; }
+      if (player.onGround && Input.justPressed('JUMP')) { player.vy = -JUMP_VEL; player.onGround = false; player.sx = 0.8; player.sy = 1.25; AudioEngine.jump(); }
+      player.vy += GRAVITY * dt;
+      const prevBottom = player.y + PH;
+      player.x = clamp(player.x + player.vx * dt, PX0, PX1 - PW);
+      player.y += player.vy * dt;
+      const wasAir = !player.onGround;
+      player.onGround = false;
+      const bottom = player.y + PH, pcx = player.x + PW / 2;
+      for (const p of ROWS) {
+        if (pcx >= PX0 && pcx <= PX1 && player.vy >= 0 && prevBottom <= p.y + 1 && bottom >= p.y) {
+          player.y = p.y - PH; player.vy = 0; player.onGround = true; break;
+        }
+      }
+      if (player.y + PH > ROWS[0].y) { player.y = ROWS[0].y - PH; player.vy = 0; player.onGround = true; }
+      if (player.onGround && wasAir) { player.sx = 1.3; player.sy = 0.7; AudioEngine.land(); addShake(1.5); }
+    }
+
+    updateBarrels(dt); updateDiscs(dt); updateKong(dt); collisions();
+
+    if (overlap(player.x, player.y, PW, PH, GOAL.x, GOAL.y, GOAL.w, GOAL.h)) {
+      const total = 2000 + Math.floor(bonus);
+      addScore(total, GOAL.x + 8, GOAL.y - 6, C.gold);
+      burst(GOAL.x + 8, GOAL.y, C.gold, 28, 130);
+      AudioEngine.stageClear(); AudioEngine.stopMusic();
+      flash = 1; addShake(4);
+      state = ST.WIN; stateTimer = 2.6;
+    }
+  }
+
+  function updateBarrels(dt) {
+    for (const bb of barrels) {
+      if (bb.state === 'roll') {
+        bb.x += bb.dir * barrelSpeed * dt; bb.rot += bb.dir * 9 * dt; bb.y = bb.py - BR;
+        if (Math.random() < 0.012) {
+          const L = LADDERS.find(L => Math.abs(L.x - bb.x) < 6 && L.top === bb.py);
+          if (L) { bb.state = 'fall'; bb.fromY = bb.py; bb.vy = 0; }
+        }
+        if (bb.x <= PX0 + BR || bb.x >= PX1 - BR) { bb.x = clamp(bb.x, PX0 + BR, PX1 - BR); bb.state = 'fall'; bb.fromY = bb.py; bb.vy = 0; AudioEngine.bounce(); }
+      } else {
+        bb.vy += GRAVITY * dt; const prevBottom = bb.y + BR; bb.y += bb.vy * dt; bb.rot += 6 * dt;
+        const bottom = bb.y + BR;
+        for (const p of ROWS) {
+          if (p.y > bb.fromY + 2 && bb.x >= PX0 && bb.x <= PX1 && prevBottom <= p.y + 1 && bottom >= p.y) {
+            bb.state = 'roll'; bb.py = p.y; bb.dir = p.dir; bb.y = p.y - BR; bb.vy = 0; break;
+          }
+        }
+        if (bb.y - BR > RH) bb.dead = true;
+      }
+    }
+    for (let i = barrels.length - 1; i >= 0; i--) if (barrels[i].dead) barrels.splice(i, 1);
+  }
+
+  function updateDiscs(dt) {
+    for (const d of discs) { d.x += d.vx * dt; d.rot += 22 * dt; d.life -= dt; if (d.x < -10 || d.x > RW + 10 || d.life <= 0) d.dead = true; }
+    for (let i = discs.length - 1; i >= 0; i--) if (discs[i].dead) discs.splice(i, 1);
+  }
+
+  function updateKong(dt) {
+    kong.beat += dt * 6;
+    kong.throwAnim = Math.max(0, kong.throwAnim - dt);
+    kong.stun = Math.max(0, kong.stun - dt);
+    if (state === ST.PLAY && kong.stun <= 0) {
+      kong.throwTimer -= dt;
+      if (kong.throwTimer <= 0) {
+        barrels.push({ x: KONG.x + 10, y: ROWS[5].y - BR, py: ROWS[5].y, dir: ROWS[5].dir, vy: 0, rot: 0, state: 'roll', dead: false, scored: false });
+        kong.throwTimer = spawnInterval; kong.throwAnim = 0.35;
+        if (Math.random() < 0.5) AudioEngine.kongRoar();
+      }
+    }
+  }
+
+  function collisions() {
+    for (const d of discs) {
+      for (const bb of barrels) {
+        if (bb.dead) continue;
+        if (Math.hypot(d.x - bb.x, d.y - bb.y) < DISC_R + BR) {
+          bb.dead = true; d.dead = true; addScore(150, bb.x, bb.y - 6, C.cyan);
+          burst(bb.x, bb.y, C.girder, 12, 110); AudioEngine.smash(); AudioEngine.coin();
+          hitstop = 0.04; addShake(2.5);
+        }
+      }
+    }
+    for (const d of discs) {
+      if (d.dead) continue;
+      if (overlap(d.x - DISC_R, d.y - DISC_R, DISC_R * 2, DISC_R * 2, KONG.x - 17, KONG.y - 36, 34, 36)) {
+        d.dead = true; kong.stun = 1.5; addScore(300, KONG.x, KONG.y - 42, C.gold);
+        burst(d.x, d.y, C.gold, 14, 120); AudioEngine.stun(); hitstop = 0.06; addShake(3);
+      }
+    }
+    if (player.invuln <= 0) {
+      for (const bb of barrels) {
+        if (bb.dead) continue;
+        if (!bb.scored && !player.onGround && Math.abs((player.x + PW / 2) - bb.x) < 11 && (player.y + PH) < bb.y) {
+          bb.scored = true; addScore(100, bb.x, bb.y - 10, C.green); AudioEngine.coin();
+        }
+        if (overlap(player.x + 1, player.y + 1, PW - 2, PH - 2, bb.x - BR + 1, bb.y - BR + 1, BR * 2 - 2, BR * 2 - 2)) {
+          lives--; AudioEngine.hurt(); burst(player.x + PW / 2, player.y + PH / 2, C.pink, 22, 120);
+          popup(player.x + PW / 2, player.y - 4, 'OUCH', C.red);
+          hitstop = 0.12; addShake(5); flash = 0.6;
+          state = ST.DYING; stateTimer = 1.1; break;
+        }
+      }
+    }
+  }
+
+  // ==========================================================================
+  // DRAW
+  // ==========================================================================
+  function draw() {
+    drawBackground();
+    if (state === ST.ATTRACT) {
+      if (attractMode === 'title') drawTitle(); else drawHowTo();
+    } else {
+      drawTower(); drawGoal(); drawKong();
+      drawBarrels(); drawDiscs();
+      if (state !== ST.GAMEOVER) drawPlayer();
+      drawParticles(); drawPopups();
+      drawHud();
+      if (state === ST.INTRO) drawIntro();
+      if (state === ST.WIN) banner('STAGE ' + level + ' CLEAR', C.gold);
+      if (state === ST.GAMEOVER) drawGameOver();
+      if (Input.isTouch() && (state === ST.PLAY || state === ST.DYING)) drawTouch();
+    }
+    if (flash > 0) { b.fillStyle = `rgba(255,255,255,${flash * 0.5})`; b.fillRect(0, 0, RW, RH); }
+
+    // blit to screen with shake, no smoothing
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, SW, SH);
+    const ox = (Math.random() * 2 - 1) * shake * SCALE, oy = (Math.random() * 2 - 1) * shake * SCALE;
+    ctx.drawImage(buf, ox, oy, SW, SH);
+  }
+
+  let bgPhase = 0;
+  function drawBackground() {
+    bgPhase += 0.006;
+    const grd = b.createLinearGradient(0, 0, 0, RH);
+    grd.addColorStop(0, C.sky0); grd.addColorStop(1, C.sky1);
+    b.fillStyle = grd; b.fillRect(0, 0, RW, RH);
+    for (const s of stars) {
+      const tw = 0.5 + 0.5 * Math.sin(s.t * 3 + s.x);
+      b.fillStyle = `rgba(180,120,220,${0.25 + tw * 0.4})`;
+      b.fillRect(s.x | 0, s.y | 0, s.s, s.s);
+    }
+    // disco ball glow up top
+    const pulse = 0.5 + 0.5 * Math.sin(bgPhase * 4);
+    for (let i = 0; i < 3; i++) {
+      b.fillStyle = `rgba(255,120,200,${0.04 + pulse * 0.03})`;
+      b.beginPath(); b.moveTo(RW / 2, 30);
+      b.lineTo(i * RW / 2 - 20, RH); b.lineTo(i * RW / 2 + 40, RH); b.closePath(); b.fill();
+    }
+  }
+
+  function drawTower() {
+    for (const p of ROWS) {
+      px(PX0, p.y, PX1 - PX0, 5, C.girder);
+      px(PX0, p.y, PX1 - PX0, 1, C.girderHi);
+      px(PX0, p.y + 4, PX1 - PX0, 1, C.girderLo);
+      for (let x = PX0 + 3; x < PX1 - 2; x += 10) px(x, p.y + 2, 2, 2, C.rivet);
+    }
+    for (const L of LADDERS) {
+      px(L.x - 5, L.top, 1, L.bottom - L.top + 5, C.ladder);
+      px(L.x + 4, L.top, 1, L.bottom - L.top + 5, C.ladder);
+      for (let y = L.top + 3; y < L.bottom + 5; y += 6) px(L.x - 5, y, 10, 1, C.ladderLo);
+    }
+  }
+
+  function drawGoal() {
+    const cx = GOAL.x + 8, cy = GOAL.y + 9;
+    const pulse = 0.6 + 0.4 * Math.sin(performance.now() / 180);
+    b.fillStyle = `rgba(255,225,77,${0.25 * pulse})`; disc(cx, cy, 11, `rgba(255,225,77,${0.18 * pulse})`);
+    disc(cx, cy, 7, C.gold);
+    ring(cx, cy, 5, C.goldLo);
+    disc(cx, cy, 2, C.dark);
+    if (Math.sin(performance.now() / 120) > 0) px(cx + 5, cy - 7, 2, 2, C.white);
+  }
+
+  function drawVinyl(x, y, r, rot, label, glow) {
+    if (glow) disc(x | 0, y | 0, r + 2, glow);
+    disc(x | 0, y | 0, r, C.dark);
+    ring(x | 0, y | 0, r - 1, 'rgba(255,255,255,0.18)');
+    disc(x | 0, y | 0, Math.max(2, (r * 0.4) | 0), label);
+    px(x, y, 1, 1, C.dark);
+    // spin highlight
+    const hx = x + Math.cos(rot) * (r - 1), hy = y + Math.sin(rot) * (r - 1);
+    px(hx, hy, 1, 1, C.white);
+  }
+  function drawBarrels() { for (const bb of barrels) drawVinyl(bb.x, bb.y, BR, bb.rot, C.girder); }
+  function drawDiscs() { for (const d of discs) drawVinyl(d.x, d.y, DISC_R, d.rot, C.cyan, `rgba(69,224,255,0.4)`); }
+
+  function drawKong(ox, oy) {
+    const x = (ox != null ? ox : KONG.x), y = (oy != null ? oy : KONG.y);
+    const beat = Math.sin(kong.beat) * 2;
+    const st = kong.stun > 0;
+    const fur = st ? '#6a6a7a' : C.fur, furLo = st ? '#50505e' : C.furLo;
+    // body
+    disc(x, y - 14, 16, furLo);
+    px(x - 14, y - 16, 28, 16, furLo);
+    // arms
+    const armY = kong.throwAnim > 0 ? y - 26 : y - 18 + beat;
+    disc(x - 16, armY, 5, fur); disc(x + 16, armY + (kong.throwAnim > 0 ? -4 : 0), 5, fur);
+    // head
+    disc(x, y - 30, 11, fur);
+    px(x - 7, y - 30, 14, 8, fur);
+    // muzzle
+    disc(x, y - 24, 6, st ? '#9a9aa8' : C.furHi);
+    // headphones
+    disc(x - 11, y - 30, 3, C.pink); disc(x + 11, y - 30, 3, C.pink);
+    px(x - 11, y - 38, 22, 2, C.pinkLo);
+    // eyes
+    if (st) { text('X', x - 6, y - 34, 1, C.white); text('X', x + 3, y - 34, 1, C.white); }
+    else { px(x - 5, y - 33, 2, 2, C.white); px(x + 3, y - 33, 2, 2, C.white); px(x - 5 + (beat > 0 ? 1 : 0), y - 32, 1, 1, C.dark); px(x + 4, y - 32, 1, 1, C.dark); }
+  }
+
+  function drawPlayer() {
+    if (player.invuln > 0 && Math.floor(player.invuln * 14) % 2 === 0) return;
+    const cx = player.x + PW / 2, feetY = player.y + PH, f = player.face;
+    const step = player.onGround && Math.abs(player.vx) > 1 ? Math.sin(player.walk) : 0;
+    b.save();
+    b.translate(cx, feetY);
+    b.scale(f * player.sx, player.sy);
+    b.translate(-cx, -feetY);
+    const x = player.x;
+    // legs
+    px(x + 2, feetY - 3 + step, 3, 3, C.pants);
+    px(x + 6, feetY - 3 - step, 3, 3, C.pants);
+    px(x + 2, feetY - 1 + step, 3, 1, C.dark);
+    px(x + 6, feetY - 1 - step, 3, 1, C.dark);
+    // body
+    px(x + 1, player.y + 7, 9, 6, C.pink);
+    px(x + 1, player.y + 7, 9, 1, C.white);
+    // arm (throw side)
+    px(x + 8, player.y + 8, 3, 4, C.skin);
+    // head
+    px(x + 2, player.y, 7, 7, C.skin);
+    px(x + 2, player.y + 6, 7, 1, C.skinLo);
+    // eye
+    px(x + 6, player.y + 3, 1, 2, C.dark);
+    // cap
+    px(x + 1, player.y - 1, 9, 3, C.cyan);
+    px(x + 6, player.y + 1, 4, 1, C.cyan);
+    px(x + 1, player.y - 1, 9, 1, C.white);
+    // headphone
+    px(x + 1, player.y + 2, 2, 3, C.dark);
+    b.restore();
+  }
+
+  function drawHud() {
+    text(String(score).padStart(6, '0'), 6, 5, 2, C.white);
+    text('SCORE', 6, 17, 1, C.girder);
+    for (let i = 0; i < lives; i++) drawVinyl(80 + i * 12, 9, 4, performance.now() / 300 + i, C.pink);
+    const lv = 'LV' + level;
+    text(lv, RW - textW(lv, 2) - 6, 5, 2, C.white);
+    const bs = 'BONUS ' + Math.floor(bonus);
+    text(bs, RW - textW(bs, 1) - 6, 18, 1, C.gold);
+  }
+
+  function drawTouch() {
+    const Z = Input.touchZones();
+    for (const a of Object.keys(Z)) {
+      const z = Z[a];
+      const x0 = z.x0 / SCALE, y0 = z.y0 / SCALE, w = (z.x1 - z.x0) / SCALE, h = (z.y1 - z.y0) / SCALE;
+      const held = Input.isDown(a);
+      const col = a === 'JUMP' ? C.green : a === 'THROW' ? C.cyan : C.girder;
+      b.globalAlpha = held ? 0.9 : 0.32;
+      b.fillStyle = 'rgba(0,0,0,0.35)'; b.fillRect(x0, y0, w, h);
+      b.fillStyle = col; b.fillRect(x0, y0, w, 1); b.fillRect(x0, y0 + h - 1, w, 1);
+      b.fillRect(x0, y0, 1, h); b.fillRect(x0 + w - 1, y0, 1, h);
+      b.globalAlpha = held ? 1 : 0.7;
+      if (z.label.length > 1) text(z.label, x0 + (w - textW(z.label, 1)) / 2, y0 + h / 2 - 2, 1, col);
+      else drawArrow(x0 + w / 2, y0 + h / 2, a, col);
+      b.globalAlpha = 1;
+    }
+  }
+  function drawArrow(cx, cy, dir, col) {
+    b.fillStyle = col;
+    for (let i = 0; i < 4; i++) {
+      if (dir === 'UP') b.fillRect(cx - i, cy - 2 + i, i * 2 + 1, 1);
+      if (dir === 'DOWN') b.fillRect(cx - i, cy + 2 - i, i * 2 + 1, 1);
+      if (dir === 'LEFT') b.fillRect(cx - 2 + i, cy - i, 1, i * 2 + 1);
+      if (dir === 'RIGHT') b.fillRect(cx + 2 - i, cy - i, 1, i * 2 + 1);
+    }
+  }
+
+  function drawParticles() {
+    for (const p of particles) {
+      b.globalAlpha = Math.max(0, 1 - p.age / p.life);
+      px(p.x, p.y, 2, 2, p.color);
+    }
+    b.globalAlpha = 1;
+  }
+  function drawPopups() {
+    for (const u of popups) {
+      b.globalAlpha = Math.max(0, 1 - u.age / u.life);
+      text(u.t, Math.round(u.x - textW(u.t, 1) / 2), u.y | 0, 1, u.color);
+    }
+    b.globalAlpha = 1;
+  }
+
+  function banner(str, color) {
+    b.fillStyle = 'rgba(10,4,16,0.6)'; b.fillRect(0, RH / 2 - 16, RW, 32);
+    textC(str, RH / 2 - 6, 3, color);
+  }
+
+  function drawIntro() {
+    b.fillStyle = 'rgba(10,4,16,0.55)'; b.fillRect(0, 0, RW, RH);
+    textC('STAGE ' + level, RH / 2 - 40, 3, C.gold);
+    const n = Math.ceil(stateTimer - 0.4);
+    if (n >= 1) textC(String(n), RH / 2 - 6, 6, C.white);
+    else textC('GO!', RH / 2 - 6, 6, C.green);
+    textC('REACH THE GOLDEN DISC', RH / 2 + 30, 1, C.cyan);
+  }
+
+  function drawGameOver() {
+    b.fillStyle = 'rgba(10,4,16,0.75)'; b.fillRect(0, 0, RW, RH);
+    textC('GAME OVER', RH / 2 - 30, 4, C.pink);
+    textC('SCORE ' + String(score).padStart(6, '0'), RH / 2 + 6, 2, C.white);
+    textC('BEST ' + String(highScore).padStart(6, '0'), RH / 2 + 24, 1, C.gold);
+    if (Math.sin(performance.now() / 280) > -0.3)
+      textC(Input.isTouch() ? 'TAP TO CONTINUE' : 'PRESS START', RH / 2 + 50, 1, C.white);
+  }
+
+  // --- Title & How-To screens ----------------------------------------------
+  function drawTitle() {
+    drawKong(RW / 2, 150);
+    // logo
+    textC('WAX', 50, 7, C.girder);
+    textC('ATTACK', 95, 7, C.pink);
+    textC('THE TURNTABLE TOWER', 138, 1, C.cyan);
+    if (Math.sin(performance.now() / 250) > -0.3)
+      textC(Input.isTouch() ? 'TAP TO START' : 'PRESS START', 230, 2, C.white);
+    textC('* 2026 WAX ARCADE *', 320, 1, C.star);
+    // demo barrel rolling on the bottom for flavor
+    const dx = 30 + ((performance.now() / 14) % (RW - 60));
+    drawVinyl(dx, 300, BR, performance.now() / 90, C.girder);
+  }
+
+  function drawHowTo() {
+    textC('HOW TO PLAY', 24, 3, C.gold);
+    let y = 60;
+    const line = (s, col) => { textC(s, y, 1, col || C.white); y += 14; };
+    line('CLIMB THE TOWER TO THE TOP', C.cyan);
+    line('GRAB THE GOLDEN MASTER DISC', C.gold);
+    y += 6;
+    // mini player + ladder demo
+    drawPlayerStatic(40, 120); px(64, 110, 1, 30, C.ladder); px(70, 110, 1, 30, C.ladder); for (let yy = 113; yy < 140; yy += 6) px(64, yy, 7, 1, C.ladderLo);
+    text('MOVE + CLIMB LADDERS', 90, 122, 1, C.white);
+    drawVinyl(45, 165, BR, performance.now() / 80, C.girder);
+    text('JUMP OVER BASS BARRELS', 90, 162, 1, C.white);
+    drawVinyl(45, 205, DISC_R, performance.now() / 60, C.cyan, 'rgba(69,224,255,0.4)');
+    text('SLING VINYL TO SMASH THEM', 90, 202, 1, C.white);
+    drawKong(45, 250);
+    text('STUN DJ KONG FOR BIG POINTS', 90, 240, 1, C.white);
+    y = 285;
+    if (Input.isTouch()) { line('D-PAD MOVE  ·  JUMP  ·  DISC', C.green); }
+    else { line('ARROWS/WASD MOVE  SPACE JUMP', C.green); line('J OR F  THROW VINYL', C.green); }
+    if (Math.sin(performance.now() / 250) > -0.3) textC(Input.isTouch() ? 'TAP TO START' : 'PRESS START', 335, 2, C.white);
+  }
+  function drawPlayerStatic(x, y) {
+    px(x + 2, y + 13, 3, 3, C.pants); px(x + 6, y + 13, 3, 3, C.pants);
+    px(x + 1, y + 7, 9, 6, C.pink);
+    px(x + 2, y, 7, 7, C.skin); px(x + 6, y + 3, 1, 2, C.dark);
+    px(x + 1, y - 1, 9, 3, C.cyan);
+  }
+
+  // --- Main loop ------------------------------------------------------------
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    try { update(dt); draw(); } catch (e) { console.error(e); }
+    finally { requestAnimationFrame(loop); }
+  }
+  requestAnimationFrame(loop);
+})();
+
+</script>
+</body>
+</html>
