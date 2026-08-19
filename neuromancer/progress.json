@@ -10,13 +10,13 @@
       "name": "Part One: Chiba City Blues",
       "chapters": [
         1,
-        2,
-        3
+        2
       ]
     },
     {
       "name": "Part Two: The Shopping Expedition",
       "chapters": [
+        3,
         4,
         5,
         6,
@@ -30,14 +30,14 @@
         9,
         10,
         11,
-        12,
-        13,
-        14
+        12
       ]
     },
     {
       "name": "Part Four: The Straylight Run",
       "chapters": [
+        13,
+        14,
         15,
         16,
         17,
@@ -60,6 +60,11 @@
     {
       "chapter": 1,
       "page": 26,
+      "date": "2026-08-19"
+    },
+    {
+      "chapter": 2,
+      "page": 41,
       "date": "2026-08-19"
     }
   ]

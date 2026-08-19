@@ -57,10 +57,10 @@ coda.
 
 | Part | Chapters |
 | --- | --- |
-| Part One: Chiba City Blues | 1–3 |
-| Part Two: The Shopping Expedition | 4–7 |
-| Part Three: Midnight in the Rue Jules Verne | 8–14 |
-| Part Four: The Straylight Run | 15–23 |
+| Part One: Chiba City Blues | 1–2 |
+| Part Two: The Shopping Expedition | 3–7 |
+| Part Three: Midnight in the Rue Jules Verne | 8–12 |
+| Part Four: The Straylight Run | 13–23 |
 | Coda: Departure and Arrival | 24 |
 
 If your edition divides things differently, edit the `parts` list in

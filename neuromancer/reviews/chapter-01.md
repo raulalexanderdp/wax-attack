@@ -99,6 +99,6 @@ Not explanations — just things that will matter. No hints about how.
 
 ## Where you are
 
-End of chapter 1 of 24. Part One is three chapters, so you're a third of the
-way through the Chiba section — the part of the book with the fewest moving
-pieces. It picks up speed shortly.
+End of chapter 1 of 24. Part One is only two chapters long, so you're halfway
+through the Chiba section — the shortest part of the book, and the one with the
+fewest moving pieces. It picks up speed shortly.
