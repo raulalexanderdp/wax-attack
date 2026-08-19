@@ -3,7 +3,7 @@
     "title": "Neuromancer",
     "author": "William Gibson",
     "edition": "Ace mass-market paperback (default \u2014 change if yours differs)",
-    "total_pages": 271
+    "total_pages": 277
   },
   "parts": [
     {
@@ -56,5 +56,11 @@
       ]
     }
   ],
-  "entries": []
+  "entries": [
+    {
+      "chapter": 1,
+      "page": 22,
+      "date": "2026-08-19"
+    }
+  ]
 }
