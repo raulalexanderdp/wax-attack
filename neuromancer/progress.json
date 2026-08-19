@@ -1,0 +1,60 @@
+{
+  "book": {
+    "title": "Neuromancer",
+    "author": "William Gibson",
+    "edition": "Ace mass-market paperback (default \u2014 change if yours differs)",
+    "total_pages": 271
+  },
+  "parts": [
+    {
+      "name": "Part One: Chiba City Blues",
+      "chapters": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "Part Two: The Shopping Expedition",
+      "chapters": [
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "name": "Part Three: Midnight in the Rue Jules Verne",
+      "chapters": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ]
+    },
+    {
+      "name": "Part Four: The Straylight Run",
+      "chapters": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ]
+    },
+    {
+      "name": "Coda: Departure and Arrival",
+      "chapters": [
+        24
+      ]
+    }
+  ],
+  "entries": []
+}
