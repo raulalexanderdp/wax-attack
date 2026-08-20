@@ -31,10 +31,15 @@ except ImportError:
 # Picture-quality weights, summing to 0.70; faces and their penalties own the
 # rest. Sharpness leads because a motion-blurred frame is unusable no matter
 # how good the colour is.
-W_SHARP, W_CONTRAST, W_COLOR, W_CLIP = 0.30, 0.14, 0.14, 0.12
-W_FACE = 0.30           # bonus for a person being present and large enough
+W_SHARP, W_CONTRAST, W_COLOR, W_CLIP = 0.24, 0.11, 0.11, 0.09
+W_FACE = 0.25           # bonus for a person being present and large enough
+W_COMP = 0.20           # bonus for the frame being deliberately composed
 P_BLINK = 0.30          # penalty for eyes reading as shut
 P_MOUTH = 0.15          # penalty for a wide-open mouth
+P_EDGE = 0.12           # penalty for a face clipped by the frame border
+
+# Rule-of-thirds intersections in normalised coordinates.
+THIRDS = [(1 / 3, 1 / 3), (2 / 3, 1 / 3), (1 / 3, 2 / 3), (2 / 3, 2 / 3)]
 
 DEFAULT_MODEL = Path(__file__).parent / "models" / "face_detection_yunet_2023mar.onnx"
 COARSE_WIDTH = 640      # faces need pixels; 320 is too small to detect on
@@ -171,15 +176,24 @@ def stream_frames(video: Path, width: int, height: int, crop: str | None = None,
         proc.wait()
 
 
-def measure(rgb: np.ndarray) -> dict:
+def luma_of(rgb: np.ndarray) -> np.ndarray:
+    f = rgb.astype(np.float32)
+    return 0.2126 * f[..., 0] + 0.7152 * f[..., 1] + 0.0722 * f[..., 2]
+
+
+def laplacian(luma: np.ndarray) -> np.ndarray:
+    """Second derivative — high where edges are crisp, flat under motion blur."""
+    return (4 * luma[1:-1, 1:-1] - luma[:-2, 1:-1] - luma[2:, 1:-1]
+            - luma[1:-1, :-2] - luma[1:-1, 2:])
+
+
+def measure(rgb: np.ndarray, luma: np.ndarray | None = None) -> dict:
     """Cheap proxies for 'does this hold up as a still'."""
     f = rgb.astype(np.float32)
     r, g, b = f[..., 0], f[..., 1], f[..., 2]
-    luma = 0.2126 * r + 0.7152 * g + 0.0722 * b
-
-    # Laplacian energy — high when edges are crisp, near zero on motion blur.
-    lap = (4 * luma[1:-1, 1:-1] - luma[:-2, 1:-1] - luma[2:, 1:-1]
-           - luma[1:-1, :-2] - luma[1:-1, 2:])
+    if luma is None:
+        luma = luma_of(rgb)
+    lap = laplacian(luma)
 
     # Hasler-Susstrunk colourfulness.
     rg, yb = r - g, 0.5 * (r + g) - b
@@ -234,6 +248,112 @@ def mouth_openness(luma: np.ndarray, m_right, m_left, face_med: float) -> float 
     return float(np.clip((dark - 0.12) / 0.4, 0.0, 1.0))
 
 
+def subject_center(luma: np.ndarray, boxes) -> tuple[float, float]:
+    """Where the eye lands: the faces if we have them, else where the detail is."""
+    h, w = luma.shape
+    if boxes:
+        total = sum(b[2] * b[3] for b in boxes) or 1.0
+        cx = sum((b[0] + b[2] / 2) * b[2] * b[3] for b in boxes) / total
+        cy = sum((b[1] + b[3] / 2) * b[2] * b[3] for b in boxes) / total
+        return float(cx / w), float(cy / h)
+
+    energy = np.abs(np.diff(luma, axis=1))[:-1, :] + np.abs(np.diff(luma, axis=0))[:, :-1]
+    total = float(energy.sum())
+    if total < 1e-6:
+        return 0.5, 0.5
+    ys, xs = np.indices(energy.shape)
+    return (float((xs * energy).sum() / total) / energy.shape[1],
+            float((ys * energy).sum() / total) / energy.shape[0])
+
+
+def thirds_score(cx: float, cy: float) -> float:
+    nearest = min(float(np.hypot(cx - px, cy - py)) for px, py in THIRDS)
+    return float(np.clip(1.0 - nearest / 0.20, 0.0, 1.0))
+
+
+def symmetry_score(luma: np.ndarray) -> float:
+    """How well the frame mirrors about its vertical axis.
+
+    Resample rather than stride: striding picks columns 0, 10, 20 ... whose
+    mirrors land between samples, so the halves never line up and the measure
+    collapses into one of smoothness instead of symmetry.
+
+    The difference is normalised by the frame's own contrast, so a flat or
+    defocused frame cannot score well just by having little to disagree about.
+    """
+    if luma.shape[0] < 16 or luma.shape[1] < 16:
+        return 0.0
+    small = cv2.resize(luma, (128, 72), interpolation=cv2.INTER_AREA) \
+        if cv2 is not None else luma
+    spread = float(small.std())
+    if spread < 3.0:            # nothing to be symmetrical about
+        return 0.0
+    half = small.shape[1] // 2
+    diff = float(np.abs(small[:, :half] - np.fliplr(small[:, half:half * 2])).mean())
+    return float(np.clip(1.0 - diff / spread, 0.0, 1.0))
+
+
+def separation(luma: np.ndarray, box) -> float:
+    """Subject sharp against a soft background — the shallow-depth-of-field look."""
+    h, w = luma.shape
+    x0, y0 = max(int(box[0]), 0), max(int(box[1]), 0)
+    x1 = min(int(box[0] + box[2]), w)
+    y1 = min(int(box[1] + box[3]), h)
+    if x1 - x0 < 8 or y1 - y0 < 8 or h < 8 or w < 8:
+        return 0.5
+    lap2 = laplacian(luma) ** 2           # indices are offset by one
+    ix0, iy0 = max(x0 - 1, 0), max(y0 - 1, 0)
+    ix1, iy1 = min(x1 - 1, lap2.shape[1]), min(y1 - 1, lap2.shape[0])
+    if ix1 - ix0 < 2 or iy1 - iy0 < 2:
+        return 0.5
+    inside = lap2[iy0:iy1, ix0:ix1]
+    in_sum, in_n = float(inside.sum()), inside.size
+    bg_n = lap2.size - in_n
+    if bg_n < 16:
+        return 0.5
+    bg_mean = (float(lap2.sum()) - in_sum) / bg_n
+    ratio = (in_sum / in_n) / (bg_mean + 1e-6)
+    return float(np.clip(0.5 + np.log10(ratio + 1e-9) / 2.0, 0.0, 1.0))
+
+
+def composition(luma: np.ndarray, face_info: dict) -> dict:
+    """Blend of framing cues. All proxies — they rank frames, they don't judge.
+
+    Thirds and symmetry are taken as alternatives rather than added: a centred
+    symmetrical frame and a subject on a third are both deliberate, and it is
+    the unmotivated drift between them that reads as a grab.
+    """
+    h, w = luma.shape
+    boxes = face_info.get("boxes") or []
+    cx, cy = subject_center(luma, boxes)
+    thirds = thirds_score(cx, cy)
+    symmetry = symmetry_score(luma)
+    placement = max(thirds, symmetry)
+
+    edge, headroom, sep = 0.0, 1.0, 0.5
+    if boxes:
+        bx, by, bw, bh = max(boxes, key=lambda b: b[2] * b[3])
+        area = max(bw * bh, 1e-6)
+        spill = (max(-bx, 0) + max((bx + bw) - w, 0)) * bh \
+            + (max(-by, 0) + max((by + bh) - h, 0)) * bw
+        margin = 0.02 * min(w, h)
+        gap = min(bx, by, w - (bx + bw), h - (by + bh))
+        edge = float(np.clip(max(spill / area, (margin - gap) / margin), 0.0, 1.0))
+
+        # Faces sit naturally a little above centre; the floor of the frame reads badly.
+        headroom = float(np.clip(1.0 - abs((by + bh / 2) / h - 0.38) / 0.42, 0.0, 1.0))
+        if by / h < 0.02:
+            headroom *= 0.5
+        sep = separation(luma, (bx, by, bw, bh))
+        score = 0.45 * placement + 0.25 * headroom + 0.30 * sep
+    else:
+        score = 0.70 * placement + 0.30 * 0.5
+
+    return {"placement": placement, "thirds": thirds, "symmetry": symmetry,
+            "headroom": headroom, "separation": sep, "edge": edge,
+            "composition": float(np.clip(score, 0.0, 1.0))}
+
+
 class FaceScorer:
     """YuNet detection plus landmark-patch heuristics for eyes and mouth."""
 
@@ -242,15 +362,15 @@ class FaceScorer:
                                              conf, 0.3, 5000)
         self.area = float(width * height)
 
-    def score(self, rgb: np.ndarray) -> dict:
+    def score(self, rgb: np.ndarray, luma: np.ndarray | None = None) -> dict:
         bgr = np.ascontiguousarray(rgb[..., ::-1])
         _, faces = self.det.detect(bgr)
         if faces is None or len(faces) == 0:
             return {"faces": 0, "face_frac": 0.0, "presence": 0.0,
-                    "blink": 0.0, "mouth": 0.0}
+                    "blink": 0.0, "mouth": 0.0, "boxes": []}
 
-        f = np.asarray(rgb, np.float32)
-        luma = 0.2126 * f[..., 0] + 0.7152 * f[..., 1] + 0.0722 * f[..., 2]
+        if luma is None:
+            luma = luma_of(rgb)
 
         # Judge eyes and mouth on the biggest face; that is the one a viewer reads.
         biggest = max(faces, key=lambda r: r[2] * r[3])
@@ -282,7 +402,8 @@ class FaceScorer:
 
         mouth = mouth_openness(luma, r_mouth, l_mouth, face_med) or 0.0
         return {"faces": int(len(faces)), "face_frac": face_frac,
-                "presence": presence, "blink": blink, "mouth": float(mouth)}
+                "presence": presence, "blink": blink, "mouth": float(mouth),
+                "boxes": [tuple(float(v) for v in r[:4]) for r in faces]}
 
 
 def rank(values: np.ndarray) -> np.ndarray:
@@ -292,8 +413,9 @@ def rank(values: np.ndarray) -> np.ndarray:
     return values.argsort().argsort().astype(np.float64) / (len(values) - 1)
 
 
-def blend(metrics: list[dict], faces: list[dict] | None) -> np.ndarray:
-    """Quality ranks plus the face bonus, minus blink and mouth penalties."""
+def blend(metrics: list[dict], faces: list[dict] | None,
+          comps: list[dict] | None = None) -> np.ndarray:
+    """Quality and composition ranks, plus faces, minus the penalties."""
     def col(name):
         return np.array([m[name] for m in metrics], dtype=np.float64)
 
@@ -305,8 +427,20 @@ def blend(metrics: list[dict], faces: list[dict] | None) -> np.ndarray:
         score = (score
                  + W_FACE * np.array([f["presence"] for f in faces])
                  - P_BLINK * np.array([f["blink"] for f in faces])
-                 - P_MOUTH * np.array([f["mouth"] for f in faces]))
+                 - P_MOUTH * np.array([f["mouth"] for f in faces])
+                 - P_EDGE * np.array([c["edge"] for c in comps] if comps
+                                     else [0.0] * len(faces)))
+    if comps:
+        score = score + W_COMP * np.array([c["composition"] for c in comps])
     return score
+
+
+def analyse(rgb: np.ndarray, scorer, want_comp: bool):
+    """One decode, one luma, all three scorers."""
+    luma = luma_of(rgb)
+    face = scorer.score(rgb, luma) if scorer else None
+    comp = composition(luma, face or {}) if want_comp else None
+    return measure(rgb, luma), face, comp
 
 
 def shot_index(ts: float, cuts: list[float]) -> int:
@@ -379,6 +513,8 @@ def main() -> int:
                     help="discard shots with nobody in them")
     ap.add_argument("--no-faces", action="store_true",
                     help="skip face scoring entirely")
+    ap.add_argument("--no-composition", action="store_true",
+                    help="skip composition scoring entirely")
     ap.add_argument("--face-model", type=Path, default=DEFAULT_MODEL)
     ap.add_argument("--no-autocrop", action="store_true",
                     help="keep letterbox bars instead of trimming them")
@@ -415,12 +551,16 @@ def main() -> int:
     cuts = detect_cuts(args.video, args.scene)
     print(f"detected {len(cuts)} cuts -> {len(cuts) + 1} shots")
 
-    stamps, metrics, faces = [], [], []
+    want_comp = not args.no_composition
+    stamps, metrics, faces, comps = [], [], [], []
     for idx, frame in stream_frames(args.video, sw, sh, crop, rate=args.rate):
+        m, f, c = analyse(frame, scorer, want_comp)
         stamps.append(idx / args.rate)
-        metrics.append(measure(frame))
+        metrics.append(m)
         if scorer:
-            faces.append(scorer.score(frame))
+            faces.append(f)
+        if want_comp:
+            comps.append(c)
     if not stamps:
         print("decoded no frames — is this really a video file?", file=sys.stderr)
         return 1
@@ -439,7 +579,8 @@ def main() -> int:
         keep = list(range(len(metrics)))
 
     score = blend([metrics[i] for i in keep],
-                  [faces[i] for i in keep] if scorer else None)
+                  [faces[i] for i in keep] if scorer else None,
+                  [comps[i] for i in keep] if want_comp else None)
 
     # Best frame per shot, so we get coverage instead of ten stills of one setup.
     best: dict[int, tuple[float, float]] = {}
@@ -463,22 +604,24 @@ def main() -> int:
     win = args.refine_window
     for ts, sc in chosen:
         if win <= 0:
-            refined.append({"ts": ts, "score": sc, **({} if not scorer else
-                            {"faces": 0, "blink": 0.0, "mouth": 0.0})})
+            refined.append({"ts": ts, "score": sc})
             continue
         start = max(ts - win, 0.0)
-        local_ts, local_m, local_f = [], [], []
+        local_ts, local_m, local_f, local_c = [], [], [], []
         for idx, frame in stream_frames(args.video, sw, sh, crop,
                                         start=start, duration=win * 2):
+            m, f, c = analyse(frame, scorer, want_comp)
             local_ts.append(start + idx / meta["fps"])
-            local_m.append(measure(frame))
+            local_m.append(m)
             if scorer:
-                local_f.append(scorer.score(frame))
+                local_f.append(f)
+            if want_comp:
+                local_c.append(c)
         if not local_ts:
-            refined.append({"ts": ts, "score": sc, "faces": 0,
-                            "blink": 0.0, "mouth": 0.0})
+            refined.append({"ts": ts, "score": sc})
             continue
-        local_score = blend(local_m, local_f if scorer else None)
+        local_score = blend(local_m, local_f if scorer else None,
+                            local_c if want_comp else None)
         j = int(np.argmax(local_score))
         entry = {"ts": local_ts[j], "score": float(local_score[j]),
                  "moved": round(local_ts[j] - ts, 3)}
@@ -486,6 +629,13 @@ def main() -> int:
             entry.update(faces=local_f[j]["faces"],
                          blink=round(local_f[j]["blink"], 3),
                          mouth=round(local_f[j]["mouth"], 3))
+        if want_comp:
+            entry.update(composition=round(local_c[j]["composition"], 3),
+                         thirds=round(local_c[j]["thirds"], 3),
+                         symmetry=round(local_c[j]["symmetry"], 3),
+                         headroom=round(local_c[j]["headroom"], 3),
+                         separation=round(local_c[j]["separation"], 3),
+                         edge=round(local_c[j]["edge"], 3))
         refined.append(entry)
 
     args.outdir.mkdir(parents=True, exist_ok=True)
@@ -505,6 +655,10 @@ def main() -> int:
                 note += " (eyes uncertain)"
             if r.get("mouth", 0) > 0.6:
                 note += " (mouth wide)"
+        if want_comp:
+            note += f'  comp {r.get("composition", 0):.2f}'
+            if r.get("edge", 0) > 0.5:
+                note += " (face at edge)"
         if r.get("moved"):
             note += f'  nudged {r["moved"]:+.2f}s'
         print(f'  #{n:02d}  {timecode(r["ts"])}  score {r["score"]:.3f}{note}')
