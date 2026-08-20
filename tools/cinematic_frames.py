@@ -93,10 +93,50 @@ def detect_cuts(video: Path, threshold: float) -> list[float]:
                    for m in re.findall(r"pts_time:([\d.]+)", proc.stdout)})
 
 
-def sample_candidates(video: Path, rate: float, width: int, height: int):
+def detect_letterbox(video: Path, meta: dict, samples: int = 6):
+    """Union of ffmpeg's cropdetect guesses, so we never cut into real picture.
+
+    Screen recordings arrive padded: a 2.39:1 cut played full-screen on a phone
+    sits in a box of black. Scoring and cropping both go wrong if we keep it.
+    """
+    boxes = []
+    step = max(meta["duration"] / (samples + 1), 0.5)
+    for i in range(1, samples + 1):
+        err = subprocess.run(
+            [ffmpeg_bin(), "-v", "info", "-ss", f"{step * i:.2f}", "-i", str(video),
+             "-vf", "cropdetect=24:2:0", "-frames:v", "40", "-an", "-f", "null", "-"],
+            capture_output=True, text=True,
+        ).stderr
+        for w, h, x, y in re.findall(r"crop=(\d+):(\d+):(\d+):(\d+)", err):
+            w, h, x, y = int(w), int(h), int(x), int(y)
+            if w > 0 and h > 0:
+                boxes.append((x, y, x + w, y + h))
+    if not boxes:
+        return None
+
+    left = min(b[0] for b in boxes)
+    top = min(b[1] for b in boxes)
+    right = max(b[2] for b in boxes)
+    bottom = max(b[3] for b in boxes)
+    w = min(right - left, meta["width"] - left) // 2 * 2
+    h = min(bottom - top, meta["height"] - top) // 2 * 2
+    if w < 16 or h < 16:
+        return None
+    # Within a couple percent of the full frame means there was no padding.
+    if w >= meta["width"] * 0.98 and h >= meta["height"] * 0.98:
+        return None
+    return {"w": w, "h": h, "x": left, "y": top,
+            "filter": f"crop={w}:{h}:{left}:{top}"}
+
+
+def sample_candidates(video: Path, rate: float, width: int, height: int,
+                      crop: str | None = None):
     """Decode the whole video small and fast; yield (timestamp, RGB array)."""
+    chain = f"fps={rate},scale={width}:{height}"
+    if crop:
+        chain = f"{crop},{chain}"
     cmd = [ffmpeg_bin(), "-v", "error", "-i", str(video),
-           "-vf", f"fps={rate},scale={width}:{height}",
+           "-vf", chain,
            "-f", "rawvideo", "-pix_fmt", "rgb24", "-"]
     frame_bytes = width * height * 3
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
@@ -159,12 +199,13 @@ def shot_index(ts: float, cuts: list[float]) -> int:
     return lo
 
 
-def extract_full(video: Path, ts: float, dest: Path) -> None:
-    subprocess.run(
-        [ffmpeg_bin(), "-v", "error", "-y", "-ss", f"{ts:.3f}", "-i", str(video),
-         "-frames:v", "1", "-pix_fmt", "rgb24", str(dest)],
-        check=True, capture_output=True,
-    )
+def extract_full(video: Path, ts: float, dest: Path,
+                 crop: str | None = None) -> None:
+    cmd = [ffmpeg_bin(), "-v", "error", "-y", "-ss", f"{ts:.3f}", "-i", str(video)]
+    if crop:
+        cmd += ["-vf", crop]
+    cmd += ["-frames:v", "1", "-pix_fmt", "rgb24", str(dest)]
+    subprocess.run(cmd, check=True, capture_output=True)
 
 
 def center_crop(img: Image.Image, ratio: tuple[int, int]) -> Image.Image:
@@ -222,6 +263,8 @@ def main() -> int:
                     help="cut-detection sensitivity, 0-1 (default 0.25)")
     ap.add_argument("--min-gap", type=float, default=1.0,
                     help="minimum seconds between two keepers (default 1.0)")
+    ap.add_argument("--no-autocrop", action="store_true",
+                    help="keep letterbox bars instead of trimming them")
     ap.add_argument("--crops", default="4x5,9x16",
                     help="comma list of aspect crops, or 'none'")
     args = ap.parse_args()
@@ -234,13 +277,21 @@ def main() -> int:
     print(f"{args.video.name}: {meta['width']}x{meta['height']} "
           f"{meta['fps']:.2f}fps {meta['duration']:.1f}s")
 
+    box = None if args.no_autocrop else detect_letterbox(args.video, meta)
+    crop = box["filter"] if box else None
+    if box:
+        print(f"trimming padding -> {box['w']}x{box['h']} "
+              f"(+{box['x']},{box['y']})")
+
     cuts = detect_cuts(args.video, args.scene)
     print(f"detected {len(cuts)} cuts -> {len(cuts) + 1} shots")
 
+    eff_w = box["w"] if box else meta["width"]
+    eff_h = box["h"] if box else meta["height"]
     sw = 320
-    sh = max(2, round(sw * meta["height"] / meta["width"]) // 2 * 2)
+    sh = max(2, round(sw * eff_h / eff_w) // 2 * 2)
     stamps, metrics = [], []
-    for ts, frame in sample_candidates(args.video, args.rate, sw, sh):
+    for ts, frame in sample_candidates(args.video, args.rate, sw, sh, crop):
         stamps.append(ts)
         metrics.append(measure(frame))
     if not stamps:
@@ -284,7 +335,7 @@ def main() -> int:
     picks = []
     for n, (ts, sc) in enumerate(chosen, 1):
         dest = full_dir / f"{n:02d}_{timecode(ts).replace(':', 'm')}.png"
-        extract_full(args.video, ts, dest)
+        extract_full(args.video, ts, dest, crop)
         picks.append({"n": n, "ts": ts, "score": round(sc, 4), "path": dest})
         print(f"  #{n:02d}  {timecode(ts)}  score {sc:.3f}  {dest.name}")
 
