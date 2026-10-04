@@ -105,7 +105,7 @@ CAMERAS = [
 PROJECT   = 'VEGA BAJA SKATE PARK'
 SUBTITLE  = 'OVERHEAD LAYOUT BASE \u00b7 PAGE UP = 332\u00b0 (NNW)'
 SHOOT     = '26 OCT 2026'
-REV       = 'REV 4 \u00b7 04 OCT 2026'
+REV       = 'REV 5 \u00b7 04 OCT 2026'
 SITE      = '18.445\u00b0N 66.388\u00b0W \u00b7 AST (UTC-4)'
 
 # The pad is not square to the compass. Measured by rotating the trace frame to

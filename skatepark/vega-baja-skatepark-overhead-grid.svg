@@ -154,7 +154,7 @@
     <text x="0" y="0"  class="title">VEGA BAJA SKATE PARK</text>
     <text x="0" y="26" class="sub">OVERHEAD LAYOUT BASE · PAGE UP = 332° (NNW)</text>
     <text x="0" y="50" class="sub">CORRE FORREST! &#183; SHOOT 26 OCT 2026</text>
-    <text x="0" y="70" class="note">REV 4 · 04 OCT 2026</text>
+    <text x="0" y="70" class="note">REV 5 · 04 OCT 2026</text>
     
     </g>
     <g transform="translate(1330,58)">
@@ -194,55 +194,39 @@
     <text x="0" y="31" class="note">PAD 202.8 ft &#215; 81.0 ft &#183; SCALE FROM GOOGLE MAPS BAR</text>
     </g>
     <g transform="translate(0,0)">
-    <circle class="dial" cx="1505" cy="762" r="70"/>
-    <line class="dialtick" x1="1537.9" y1="700.2" x2="1533.6" y2="708.1"/>
-    <line class="dialtick" x1="1552.7" y1="710.8" x2="1549.3" y2="714.5"/>
-    <line class="dialtick" x1="1564.4" y1="724.9" x2="1560.1" y2="727.6"/>
-    <line class="dialtick" x1="1571.9" y1="741.5" x2="1567.2" y2="743.0"/>
-    <line class="dialtick" x1="1575.0" y1="759.6" x2="1570.0" y2="759.7"/>
-    <line class="dialtick" x1="1573.2" y1="777.7" x2="1568.3" y2="776.6"/>
-    <line class="dialtick" x1="1566.8" y1="794.9" x2="1558.9" y2="790.6"/>
-    <line class="dialtick" x1="1556.2" y1="809.7" x2="1552.5" y2="806.3"/>
-    <line class="dialtick" x1="1542.1" y1="821.4" x2="1539.4" y2="817.1"/>
-    <line class="dialtick" x1="1525.5" y1="828.9" x2="1524.0" y2="824.2"/>
-    <line class="dialtick" x1="1507.4" y1="832.0" x2="1507.3" y2="827.0"/>
-    <line class="dialtick" x1="1489.3" y1="830.2" x2="1490.4" y2="825.3"/>
-    <line class="dialtick" x1="1472.1" y1="823.8" x2="1476.4" y2="815.9"/>
-    <line class="dialtick" x1="1457.3" y1="813.2" x2="1460.7" y2="809.5"/>
-    <line class="dialtick" x1="1445.6" y1="799.1" x2="1449.9" y2="796.4"/>
-    <line class="dialtick" x1="1438.1" y1="782.5" x2="1442.8" y2="781.0"/>
-    <line class="dialtick" x1="1435.0" y1="764.4" x2="1440.0" y2="764.3"/>
-    <line class="dialtick" x1="1436.8" y1="746.3" x2="1441.7" y2="747.4"/>
-    <line class="dialtick" x1="1443.2" y1="729.1" x2="1451.1" y2="733.4"/>
-    <line class="dialtick" x1="1453.8" y1="714.3" x2="1457.5" y2="717.7"/>
-    <line class="dialtick" x1="1467.9" y1="702.6" x2="1470.6" y2="706.9"/>
-    <line class="dialtick" x1="1484.5" y1="695.1" x2="1486.0" y2="699.8"/>
-    <line class="dialtick" x1="1502.6" y1="692.0" x2="1502.7" y2="697.0"/>
-    <line class="dialtick" x1="1520.7" y1="693.8" x2="1519.6" y2="698.7"/>
-    <path class="sunarc" d="M 1557.7,808.1 A 70,70 0 0 1 1437.3,744.3"/>
-    <line class="dialtick" x1="1550.0" y1="815.6" x2="1555.8" y2="822.5"/>
-    <text x="1566.1" y="838.8" class="dialnum" text-anchor="middle">08</text>
-    <line class="dialtick" x1="1529.2" y1="827.7" x2="1532.3" y2="836.1"/>
-    <text x="1537.8" y="855.2" class="dialnum" text-anchor="middle">10</text>
-    <line class="dialtick" x1="1477.0" y1="826.2" x2="1473.5" y2="834.4"/>
-    <text x="1467.1" y="853.1" class="dialnum" text-anchor="middle">12</text>
-    <line class="dialtick" x1="1438.7" y1="784.5" x2="1430.2" y2="787.4"/>
-    <text x="1415.0" y="796.5" class="dialnum" text-anchor="middle">14</text>
-    <line class="dialtick" x1="1435.1" y1="757.5" x2="1426.2" y2="757.0"/>
-    <text x="1410.2" y="760.0" class="dialnum" text-anchor="middle">16</text>
-    <line class="sunray" x1="1441.1" y1="757.9" x2="1485.0" y2="760.7"/>
-    <polygon class="sunhead" points="1485.0,760.7 1492.6,750.2 1498.0,762.0"/>
-    <path class="narrow" d="M 1547.3,682.5 L 1546.3,701.3 L 1532.2,693.8 Z"/>
-    <text x="1554.8" y="673.4" class="tick" text-anchor="middle">N</text>
-    </g>
-    <g transform="translate(1362,902)">
-    <text x="0" y="0" class="sub">SUN &#183; 26 OCT 2026</text>
-    <text x="0" y="24" class="note">HOURS AST &#183; RISE 06:23 &#183; SET 17:56</text>
-    <text x="0" y="41" class="note">NOON 12:09 &#183; 59&#176; DUE SOUTH</text>
-    <text x="0" y="58" class="note">11:00 SUN BEHIND CAM A &#8212; FLATTEST</text>
-    <text x="0" y="75" class="note">16:00 &#183; 246&#176; WSW AT 25&#176;</text>
-    <text x="0" y="92" class="note">BEST 15:30-17:00,</text>
-    <text x="0" y="109" class="note">RAKING FROM CAMERA LEFT</text>
+    <circle class="dial" cx="1505" cy="800" r="70"/>
+    <line class="dialtick" x1="1537.9" y1="738.2" x2="1533.6" y2="746.1"/>
+    <line class="dialtick" x1="1552.7" y1="748.8" x2="1549.3" y2="752.5"/>
+    <line class="dialtick" x1="1564.4" y1="762.9" x2="1560.1" y2="765.6"/>
+    <line class="dialtick" x1="1571.9" y1="779.5" x2="1567.2" y2="781.0"/>
+    <line class="dialtick" x1="1575.0" y1="797.6" x2="1570.0" y2="797.7"/>
+    <line class="dialtick" x1="1573.2" y1="815.7" x2="1568.3" y2="814.6"/>
+    <line class="dialtick" x1="1566.8" y1="832.9" x2="1558.9" y2="828.6"/>
+    <line class="dialtick" x1="1556.2" y1="847.7" x2="1552.5" y2="844.3"/>
+    <line class="dialtick" x1="1542.1" y1="859.4" x2="1539.4" y2="855.1"/>
+    <line class="dialtick" x1="1525.5" y1="866.9" x2="1524.0" y2="862.2"/>
+    <line class="dialtick" x1="1507.4" y1="870.0" x2="1507.3" y2="865.0"/>
+    <line class="dialtick" x1="1489.3" y1="868.2" x2="1490.4" y2="863.3"/>
+    <line class="dialtick" x1="1472.1" y1="861.8" x2="1476.4" y2="853.9"/>
+    <line class="dialtick" x1="1457.3" y1="851.2" x2="1460.7" y2="847.5"/>
+    <line class="dialtick" x1="1445.6" y1="837.1" x2="1449.9" y2="834.4"/>
+    <line class="dialtick" x1="1438.1" y1="820.5" x2="1442.8" y2="819.0"/>
+    <line class="dialtick" x1="1435.0" y1="802.4" x2="1440.0" y2="802.3"/>
+    <line class="dialtick" x1="1436.8" y1="784.3" x2="1441.7" y2="785.4"/>
+    <line class="dialtick" x1="1443.2" y1="767.1" x2="1451.1" y2="771.4"/>
+    <line class="dialtick" x1="1453.8" y1="752.3" x2="1457.5" y2="755.7"/>
+    <line class="dialtick" x1="1467.9" y1="740.6" x2="1470.6" y2="744.9"/>
+    <line class="dialtick" x1="1484.5" y1="733.1" x2="1486.0" y2="737.8"/>
+    <line class="dialtick" x1="1502.6" y1="730.0" x2="1502.7" y2="735.0"/>
+    <line class="dialtick" x1="1520.7" y1="731.8" x2="1519.6" y2="736.7"/>
+    <path class="sunarc" d="M 1557.7,846.1 A 70,70 0 0 1 1437.3,782.3"/>
+    <line class="sunray" x1="1552.4" y1="841.5" x2="1565.2" y2="852.7"/>
+    <text x="1591.6" y="879.7" class="dialnum" text-anchor="middle">RISE 06:23</text>
+    <line class="sunray" x1="1444.1" y1="784.0" x2="1427.6" y2="779.7"/>
+    <text x="1393.8" y="774.9" class="dialnum" text-anchor="middle">SET 17:56</text>
+    <path class="narrow" d="M 1547.3,720.5 L 1546.3,739.3 L 1532.2,731.8 Z"/>
+    <text x="1554.8" y="711.4" class="tick" text-anchor="middle">N</text>
+    <text x="1505" y="932" class="note" text-anchor="middle">SUN &#183; 26 OCT 2026 &#183; AST</text>
     </g>
   </g>
 </svg>

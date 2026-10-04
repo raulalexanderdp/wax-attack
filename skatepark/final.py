@@ -171,31 +171,20 @@ def sundial(ox, oy, r=76):
     # sun's track across the sky, sunrise bearing to sunset bearing
     a0, b0 = pt(az_r, r); a1, b1 = pt(az_s, r)
     o.append(f'<path class="sunarc" d="M {a0:.1f},{b0:.1f} A {r},{r} 0 0 1 {a1:.1f},{b1:.1f}"/>')
-    for hh in (8, 10, 12, 14, 16):
-        az, el, _, _ = SUN.solar(y_, mo, d, hh)
-        a, b = pt(az, r); c, e = pt(az, r + 9); tx_, ty_ = pt(az, r + 25)
-        o.append(f'<line class="dialtick" x1="{a:.1f}" y1="{b:.1f}" x2="{c:.1f}" y2="{e:.1f}"/>')
-        o.append(f'<text x="{tx_:.1f}" y="{ty_+4:.1f}" class="dialnum" text-anchor="middle">{hh:02d}</text>')
-    # light direction at the recommended hour: from the sun's bearing in to centre
-    az, el, _, _ = SUN.solar(y_, mo, d, 16.0)
-    a, b = pt(az, r - 6); c, e = pt(az, 20)
-    o.append(f'<line class="sunray" x1="{a:.1f}" y1="{b:.1f}" x2="{c:.1f}" y2="{e:.1f}"/>')
-    o.append(f'<polygon class="sunhead" points="{c:.1f},{e:.1f} '
-             f'{c + math.sin(math.radians(az+150))*13:.1f},{e - math.cos(math.radians(az+150))*13:.1f} '
-             f'{c + math.sin(math.radians(az-150))*13:.1f},{e - math.cos(math.radians(az-150))*13:.1f}"/>')
+    for az, lbl in ((az_r, f'RISE {SUN.hm(rise)}'), (az_s, f'SET {SUN.hm(sett)}')):
+        a, b = pt(az, r - 7); c, e = pt(az, r + 10); tx_, ty_ = pt(az, r + 45)
+        o.append(f'<line class="sunray" x1="{a:.1f}" y1="{b:.1f}" x2="{c:.1f}" y2="{e:.1f}"/>')
+        o.append(f'<text x="{tx_:.1f}" y="{ty_+4:.1f}" class="dialnum" text-anchor="middle">{lbl}</text>')
     tip = pt(0, r + 20); mid = pt(0, r + 3)
     na = math.radians(-G.UP_BEARING); px_, py_ = math.cos(na), math.sin(na)
     o.append(f'<path class="narrow" d="M {tip[0]:.1f},{tip[1]:.1f} '
              f'L {mid[0]+px_*8:.1f},{mid[1]+py_*8:.1f} L {mid[0]-px_*8:.1f},{mid[1]-py_*8:.1f} Z"/>')
     lab = pt(0, r + 36)
     o.append(f'<text x="{lab[0]:.1f}" y="{lab[1]+5:.1f}" class="tick" text-anchor="middle">N</text>')
+    o.append(f'<text x="{ox}" y="{oy+r+62}" class="note" text-anchor="middle">'
+             f'SUN &#183; {G.SHOOT} &#183; AST</text>')
     o.append('</g>')
     return "\n    ".join(o), rise, noon, sett
-
-def rel_to_camera(az):
-    """Signed angle from the camera's look direction; + is camera right,
-    +/-180 is straight behind the camera (flat frontal light on the band)."""
-    return ((az - G.CAM_BEARING + 180) % 360) - 180
 
 def sunnotes(x, y, rise, noon, sett):
     el_noon = SUN.solar(*SUN.DATE, noon)[1]
@@ -218,8 +207,7 @@ def sunnotes(x, y, rise, noon, sett):
 
 # ------------------------------------------------------------------ furniture
 def titleblock(x, y, show_band=False):
-    extra = (f'<text x="0" y="90" class="note">BAND LAYOUT 2 / SEMI-CIRCLE &#183; INDICATIVE, NOT SURVEYED</text>'
-             if show_band else '')
+    extra = ''
     return "\n    ".join([f'<g transform="translate({x},{y})">',
         f'<text x="0" y="0"  class="title">{G.PROJECT}</text>',
         f'<text x="0" y="26" class="sub">{G.SUBTITLE}</text>',
@@ -302,7 +290,7 @@ def svg(transparent=False, annotate=True, grid=False, cams=True, show_band=False
     bg = '' if transparent else f'<rect width="{W}" height="{H}" fill="#fff"/>'
     anno = ''
     if annotate:
-        dial, rise, noon, sett = sundial(1505, 762, 70)
+        dial, rise, noon, sett = sundial(1505, 800, 70)
         anno = f'''
   <g id="annotation">
     {titleblock(MARGIN_X, 58, show_band)}
@@ -310,7 +298,6 @@ def svg(transparent=False, annotate=True, grid=False, cams=True, show_band=False
     {keylegend(MARGIN_X, 742)}
     {scalebar(MARGIN_X, 962)}
     {dial}
-    {sunnotes(1362, 902, rise, noon, sett)}
   </g>'''
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
   <title>{G.PROJECT} - overhead layout, {G.BAND_NAME}, {G.SHOOT}</title>

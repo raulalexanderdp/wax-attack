@@ -1,6 +1,6 @@
 # Vega Baja Skate Park — overhead layout sheet
 
-**CORRE FORREST! · shoot 26 Oct 2026 · Rev 4**
+**CORRE FORREST! · shoot 26 Oct 2026 · Rev 5**
 
 Black-and-white overhead sheet for production layouts. 16:9, white ground,
 black linework. All units are feet.
@@ -46,11 +46,21 @@ page, so it looks at 332°, not 0°.
 
 NOAA solar position (`sun.py`). No DST in Puerto Rico.
 
-**Sunrise 06:23 · solar noon 12:09 at 59.0° due south · sunset 17:56.**
+**Sunrise 06:23 at bearing 102.93° · solar noon 12:09 at 59.0° due south ·
+sunset 17:56 at bearing 256.92°.**
 
-`rel` below is the angle from Cam A's look direction: 0° is straight into the
-lens (back light), ±180° is straight behind the camera (flat frontal light on
-the band), + is camera right, − is camera left.
+Independently checked: an outside source gives sunset 5:56 pm at 256.92°.
+This model gives 17:56 at **256.915°** — 0.005° apart, and the time matches to
+the minute. The ephemeris was never the problem; Rev 3's error was the page
+orientation.
+
+**The sheet now shows only sunrise and sunset**, as a track arc on the dial with
+both ends labelled. Everything else below lives here and in `sun.py`, not on the
+plate.
+
+`rel` is the angle from Cam A's look direction (332°): 0° is straight into the
+lens, ±180° is straight behind the camera — flat frontal light on the band —
+and + is camera right, − camera left.
 
 | Time | Azimuth | Altitude | rel | Reading |
 |---|---|---|---|---|
@@ -65,23 +75,18 @@ the band), + is camera right, − is camera left.
 | 16:00 | 246° | 25° | −86° | camera left, raking |
 | 17:00 | 252° | 12° | −80° | camera left, edging to 3/4 back |
 
-**Correction to Rev 3.** Rev 3 said the afternoon rakes from camera *right* and
-that the flat moment was solar noon. Both were wrong — they assumed page up was
-north. With the real 332° bearing, the afternoon rakes from **camera left**, and
-the flattest moment is **about 11:00**, not 12:09.
-
 **Avoid roughly 10:00–12:30.** The sun is within 25° of straight behind Cam A at
 46–59° altitude. Flat frontal light from high up; everyone is in caps and the
 brims will black out eyes.
 
 **Best 15:30–17:00.** Sun WSW, 32° down to 12°, within a few degrees of true
 side light from camera left. 15:30 is a clean 90° side; by 17:00 it has edged
-8–10° forward of the camera plane, so it starts giving rim down the band's
-right side. That is the most flattering part of the window.
+8–10° forward of the camera plane and starts rimming down the band's right side.
 
 Still to check on a scout: large trees west and north-west will throw long
-shadows across the performance area at 12–25° altitude, which could eat the back
-of that window. Not measurable from imagery.
+shadows across the performance area at 12–25° altitude.
+
+Run `python3 sun.py` for the full half-hourly table.
 
 ## Cameras
 

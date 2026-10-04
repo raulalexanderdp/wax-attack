@@ -63,6 +63,14 @@ def _event(y, mo, d, rising):
     noon = (720 - 4*LON - eot)/60 + TZ
     return noon - ha/15 if rising else noon + ha/15, noon
 
+CAM_BEARING = 332.0        # the plan's page-up bearing; cameras look up the page
+
+def rel_to_camera(az, look=CAM_BEARING):
+    """Signed angle from the camera's look direction. 0 = straight into the
+    lens (back light), +/-180 = straight behind the camera (flat frontal light
+    on the band), + = camera right, - = camera left."""
+    return ((az - look + 180) % 360) - 180
+
 def hm(h):
     h = h % 24
     return f"{int(h):02d}:{int(round((h-int(h))*60)):02d}"
@@ -76,10 +84,17 @@ if __name__ == "__main__":
     az, el, _, decl = solar(y, mo, d, noon)
     print(f"  declination {decl:+.2f} deg ; noon altitude {el:.1f} deg at azimuth {az:.1f}")
     print()
-    print("  time    azimuth   altitude   light travels toward   relative to Cam A (looking N)")
+    azr = solar(y, mo, d, rise)[0]; azs = solar(y, mo, d, sett)[0]
+    print(f"  sunrise bearing {azr:.2f} ; sunset bearing {azs:.2f}")
+    print()
+    print(f"  Cam A looks at {CAM_BEARING:.0f} deg (page up).")
+    print("  time    azimuth  altitude     rel   reading")
     for h in [x/2 for x in range(12, 37)]:
         az, el, _, _ = solar(y, mo, d, h)
         if el < -0.5: continue
-        shadow = (az + 180) % 360
-        side = 'BEHIND CAM (frontal)' if 135 < az < 225 else ('CAMERA LEFT' if az < 180 else 'CAMERA RIGHT')
-        print(f"  {hm(h)}   {az:6.1f}    {el:5.1f}      {shadow:6.1f}              {side}")
+        r = rel_to_camera(az)
+        if   abs(r) > 150: side = 'straight behind camera, flat frontal'
+        elif abs(r) > 110: side = 'behind-' + ('right' if r > 0 else 'left')
+        elif abs(r) >  70: side = 'camera ' + ('RIGHT' if r > 0 else 'LEFT') + ', side'
+        else:              side = 'front-' + ('right' if r > 0 else 'left') + ', back light'
+        print(f"  {hm(h)}   {az:6.1f}   {el:6.1f}  {r:+7.1f}   {side}")
