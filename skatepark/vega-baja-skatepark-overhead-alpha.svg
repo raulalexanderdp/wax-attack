@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
-  <title>Vega Baja Skate Park - overhead layout base</title>
+  <title>VEGA BAJA SKATE PARK - overhead layout, CORRE FORREST!, 26 OCT 2026</title>
   <style>
     text { font-family:'Helvetica Neue',Helvetica,Arial,'Liberation Sans',sans-serif; fill:#000 }
     .pad,.coping,.floor,.thin,.joint,.obj,.rail,.shelter,.offpad {
@@ -8,58 +8,61 @@
     .joint   { stroke-dasharray:2.1188 1.3621 }
     .shelter { fill:url(#hatch) }
     .offpad  { fill:none; stroke-dasharray:1.6648 1.2107 }
-    .icon    { fill:#fff; stroke:#000; stroke-width:2.4; stroke-linejoin:round; stroke-linecap:round }
+    .icon    { fill:#fff; stroke:#000; stroke-linejoin:round; stroke-linecap:round }
     .cone    { fill:#000; fill-opacity:0.045; stroke:#000; stroke-width:1.0; stroke-opacity:0.55; stroke-dasharray:8 7 }
     .perf    { fill:none; stroke:#000; stroke-width:1.6; stroke-dasharray:9 7 }
+    .key     { fill:#000; stroke:#fff; stroke-width:1.6 }
+    .keynum  { font-size:11.5px; font-weight:700; fill:#fff; letter-spacing:0 }
+    .dial    { fill:#fff; stroke:#000; stroke-width:1.8 }
+    .dialtick{ stroke:#000; stroke-width:1.4 }
+    .sunarc  { fill:none; stroke:#000; stroke-width:5; stroke-linecap:round }
+    .sunray  { stroke:#000; stroke-width:3 }
+    .sunhead,.narrow { fill:#000 }
+    .dialnum { font-size:12px; letter-spacing:0.6px }
     .title   { font-size:26px; letter-spacing:4.5px; font-weight:700 }
     .sub     { font-size:15px; letter-spacing:2.6px }
     .tick    { font-size:15px; letter-spacing:1.6px }
     .note    { font-size:12.5px; letter-spacing:1.4px }
     .legend  { font-size:14px; letter-spacing:1.4px }
-    .camtag  { font-size:16px; letter-spacing:2.4px; font-weight:700 }
-    .camlens { font-size:13px; letter-spacing:1.6px }
-    .key     { fill:#000; stroke:none }
-    .keynum  { font-size:13px; font-weight:700; fill:#fff; letter-spacing:0 }
+    .camtag  { font-size:15px; letter-spacing:2.4px; font-weight:700 }
+    .camlens { font-size:12.5px; letter-spacing:1.6px }
+    .bandtag { font-size:11.5px; letter-spacing:1.2px }
     .grid line { stroke:#000; stroke-width:0.6; opacity:0.22 }
 </style>
   <defs>
     <pattern id="hatch" patternUnits="userSpaceOnUse" width="2.0" height="2.0" patternTransform="rotate(45)">
       <rect width="2.0" height="2.0" fill="#fff"/>
       <line x1="0" y1="0" x2="0" y2="2.0" stroke="#000" stroke-width="0.42"/>
-    </pattern>
-  <g id="cam">
+    </pattern><g id="cam" stroke-width="4.80">
     <rect x="-17" y="-47" width="34" height="13" rx="2"/>
-    <line x1="-17" y1="-41.5" x2="17" y2="-41.5" stroke-width="2"/>
+    <line x1="-17" y1="-41.5" x2="17" y2="-41.5" stroke-width="4.00"/>
     <rect x="-15" y="-34" width="30" height="14" rx="1.5"/>
-    <g stroke-width="1.8">
+    <g stroke-width="3.60">
       <line x1="-11" y1="-33" x2="-11" y2="-21"/><line x1="-7.3" y1="-33" x2="-7.3" y2="-21"/>
       <line x1="-3.6" y1="-33" x2="-3.6" y2="-21"/><line x1="0" y1="-33" x2="0" y2="-21"/>
       <line x1="3.6" y1="-33" x2="3.6" y2="-21"/><line x1="7.3" y1="-33" x2="7.3" y2="-21"/>
       <line x1="11" y1="-33" x2="11" y2="-21"/>
     </g>
     <rect x="-13" y="-20" width="26" height="6" rx="1.5"/>
-    <rect x="-23" y="-14" width="46" height="45" rx="4" stroke-width="3"/>
+    <rect x="-23" y="-14" width="46" height="45" rx="4" stroke-width="6.00"/>
     <rect x="23" y="-4" width="9" height="23" rx="2"/>
-    <path d="M -23,-8 L -40,-8" stroke-width="2.4"/>
+    <path d="M -23,-8 L -40,-8" stroke-width="4.80"/>
     <rect x="-29" y="-11.5" width="7" height="7" rx="1"/>
     <path d="M -40,-14.5 L -56,-17 L -53.5,-3 L -40,-4 Z"/>
     <rect x="-9" y="3" width="15" height="21" rx="2"/>
-    <line x1="-6" y1="19" x2="0" y2="19" stroke-width="2"/>
+    <line x1="-6" y1="19" x2="0" y2="19" stroke-width="4.00"/>
     <rect x="-15" y="31" width="30" height="9" rx="1.5"/>
-    <rect x="-12" y="40" width="24" height="8" rx="1.5"/>
-  </g>
-  <g id="person">
-    <ellipse cx="0" cy="0" rx="30" ry="12" stroke-width="2.8"/>
-    <ellipse cx="-21" cy="0" rx="2.6" ry="6" stroke-width="2"/>
-    <ellipse cx="21" cy="0" rx="2.6" ry="6" stroke-width="2"/>
-    <circle cx="0" cy="-2" r="16" fill="#000" stroke-width="2.4"/>
-    <path d="M -15.2,3 A 16,16 0 0 0 15.2,3 Z" fill="#fff" stroke-width="2.4"/>
-    <path d="M -5.5,12.5 L 0,19 L 5.5,12.5 Z" fill="#000" stroke-width="2"/>
-  </g>
+    <rect x="-12" y="40" width="24" height="8" rx="1.5"/></g><g id="person" stroke-width="4.80">
+    <ellipse cx="0" cy="0" rx="30" ry="12" stroke-width="5.60"/>
+    <ellipse cx="-21" cy="0" rx="2.6" ry="6" stroke-width="4.00"/>
+    <ellipse cx="21" cy="0" rx="2.6" ry="6" stroke-width="4.00"/>
+    <circle cx="0" cy="-2" r="16" fill="#000" stroke-width="4.80"/>
+    <path d="M -15.2,3 A 16,16 0 0 0 15.2,3 Z" fill="#fff" stroke-width="4.80"/>
+    <path d="M -5.5,12.5 L 0,19 L 5.5,12.5 Z" fill="#000" stroke-width="4.00"/></g>
   </defs>
   
   
-  <g id="park" transform="translate(290,140) scale(6.60750)">
+  <g id="park" transform="translate(290,150) scale(6.60750)">
       <path class="pad" d="M 0.0,22.1
  C 0.0,15.6 1.3,10.7 3.6,8.5
  C 7.2,4.3 15.1,2.0 25.4,1.6
@@ -120,6 +123,7 @@
       <circle class="obj" cx="104.0" cy="62.5" r="1.25" stroke-width="0.333"/>
       <rect class="offpad" x="46.0" y="69.0" width="42.5" height="6.5" stroke-width="0.3935"/>
   </g>
-  
-  
+  <g id="keys"></g>
+  <g id="band"></g>
+  <g id="cameras"></g>
 </svg>

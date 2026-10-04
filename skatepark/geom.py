@@ -1,5 +1,9 @@
 """Vega Baja Skate Park - plan geometry.
 
+Project : CORRE FORREST! - Vega Baja Skate Park
+Shoot   : 26 October 2026
+
+
 Authored in FEET, origin at the north-west corner of the concrete pad bounding
 box, +x east, +y south.
 
@@ -54,22 +58,31 @@ BOX_X, BOX_W = 127.0, 21.5                 # the box the rail must centre on
 BOX_CX = BOX_X + BOX_W/2                   # 137.75 ft - rail and Cam A share this
 RAIL_W = 28.0
 
+# x, y, w, h, kind, label, key number, key marker (ft), confirmed-on-the-ground
 OBJECTS = [
-    (105.0,  1.5, 31.0,  7.5, 'bank',   'north bank + deck'),
-    (100.0, 24.5,  5.0, 33.0, 'ledge',  'long ledge, N-S'),
-    (117.5, 28.0,  3.0, 30.5, 'rail',   'flat rail, N-S'),
-    (131.0, 39.5, 15.5, 18.0, 'slab',   'raised platform'),
-    (131.0, 58.0, 15.5,  4.0, 'wedge',  'triangular ledge'),
-    (BOX_X, 65.0, BOX_W, 5.0, 'box',    'box / manny pad'),
-    (BOX_CX - RAIL_W/2, 70.5, RAIL_W, 0.5, 'rail', 'long flat rail, E-W'),
-    (149.5, 27.0, 14.5,  2.5, 'ledge',  'edge, E-W'),
-    (156.5, 16.5,  4.0, 10.5, 'ledge',  'upright, N-E'),
-    (164.0, 28.5,  6.5, 27.0, 'ledge',  'long ledge, east'),
-    (160.5, 56.5,  3.5, 18.0, 'ledge',  'east bar'),
-    (166.5, 56.5,  4.0, 18.0, 'ledge',  'east bar'),
-    (171.5, 59.0,  8.0, 11.5, 'slab',   'east pad'),
-    (184.5, 17.0, 17.0, 10.5, 'slab',   'north-east slab'),
-    (174.0, 36.0, 21.5, 19.0, 'shelter','roofed shelter'),
+    (105.0,  1.5, 31.0,  7.5, 'bank',   'NORTH BANK + DECK',    5, (120.5, 13.0), True),
+    (100.0, 24.5,  5.0, 33.0, 'ledge',  'LONG LEDGE, N-S',      3, ( 95.0, 30.0), False),
+    (117.5, 28.0,  3.0, 30.5, 'rail',   'FLAT RAIL, N-S',       6, (112.5, 32.0), False),
+    (131.0, 39.5, 15.5, 18.0, 'slab',   'RAISED PLATFORM',      9, (138.8, 48.5), False),
+    (131.0, 58.0, 15.5,  4.0, 'wedge',  'TRIANGULAR LEDGE',    10, (126.5, 60.0), True),
+    (BOX_X, 65.0, BOX_W, 5.0, 'box',    'BOX / MANNY PAD',      8, (122.0, 62.0), True),
+    (BOX_CX - RAIL_W/2, 70.5, RAIL_W, 0.5, 'rail',
+                                        'LONG FLAT RAIL, E-W',  7, (117.0, 70.8), True),
+    (149.5, 27.0, 14.5,  2.5, 'ledge',  'EDGE, E-W',           11, (156.8, 32.5), False),
+    (156.5, 16.5,  4.0, 10.5, 'ledge',  'UPRIGHT',             12, (151.5, 19.5), False),
+    (164.0, 28.5,  6.5, 27.0, 'ledge',  'LONG LEDGE, EAST',    14, (167.3, 24.5), False),
+    (160.5, 56.5,  3.5, 18.0, 'ledge',  'EAST BARS',           13, (157.0, 62.0), False),
+    (166.5, 56.5,  4.0, 18.0, 'ledge',  '',                     0, None,          False),
+    (171.5, 59.0,  8.0, 11.5, 'slab',   'EAST PAD',            15, (175.5, 75.0), False),
+    (184.5, 17.0, 17.0, 10.5, 'slab',   'NORTH-EAST SLAB',     17, (193.0, 31.0), False),
+    (174.0, 36.0, 21.5, 19.0, 'shelter','ROOFED SHELTER',      16, (184.8, 45.5), True),
+]
+
+# Keyed items that are not plain rectangles
+EXTRA_KEYS = [
+    (1,  'BOWL',            (29.0, 19.5), True),
+    (2,  'OFF-PAD OBJECT',  (67.3, 65.0), False),
+    (4,  'DRAIN',           ( 97.0, 62.5), True),
 ]
 
 DRAIN  = (104.0, 62.5, 1.25)
@@ -79,11 +92,12 @@ WEDGE_HIGH_END = 'east'
 
 # ------------------------------------------------------------------- staging
 # Band, "Layout 2 / semi-circle". Indicative - not surveyed.
+BAND_NAME = 'CORRE FORREST!'
 BAND = [
-    (122.0, 75.5,  18, 'GUITAR'),
-    (135.5, 76.5,   0, 'VOCALS / GUITAR'),
-    (144.0, 74.5,  -8, 'DRUMS'),
-    (153.0, 75.5, -18, 'BASS'),
+    (122.0, 75.5,  18, 'GTR',       1),
+    (135.5, 76.5,   0, 'VOX / GTR', 0),
+    (144.0, 74.5,  -8, 'DRUMS',     1),
+    (153.0, 75.5, -18, 'BASS',      0),
 ]
 PERF_AREA = (114.0, 71.8, 46.0, 8.2)
 
@@ -95,3 +109,10 @@ CAMERAS = [
     (BOX_CX + 14.75, CAM_Y, 'B', '70-200 MM', 28.8, (135.5, 76.5), 'CLOSE / VOCALS'),
     (BOX_CX - 16.75, CAM_Y, 'C', '70-200 MM', 28.8, (144.0, 74.5), 'CLOSE / INSTRUMENTS'),
 ]
+
+# --------------------------------------------------------------------- sheet
+PROJECT   = 'VEGA BAJA SKATE PARK'
+SUBTITLE  = 'OVERHEAD LAYOUT BASE \u00b7 NORTH UP'
+SHOOT     = '26 OCT 2026'
+REV       = 'REV 3 \u00b7 04 OCT 2026'
+SITE      = '18.445\u00b0N 66.388\u00b0W \u00b7 AST (UTC-4)'
