@@ -1,62 +1,84 @@
-# Vega Baja Skate Park - plan geometry, traced in source-satellite pixel space.
-# Source image 1567x642.  Park bbox approx u 42..1292, v 72..582.
+"""Vega Baja Skate Park - plan geometry.
 
-PAD = """M 25,215
- C 25,184 33,154 47,132
- C 62,110 88,95 120,89
- C 142,85 160,84 182,84
- L 300,84 L 420,80 L 560,88 L 700,90 L 866,86
- L 940,118 L 1000,172
- L 1290,170 L 1292,258 L 1250,262 L 1248,300
- L 1112,304 L 1112,424 L 1176,446 L 1176,496 L 1148,520 L 1150,574
- L 664,580 L 658,508
- L 608,506 L 608,436 L 658,436
- L 658,322
- L 560,324 L 420,336 L 300,332 L 232,348
- C 205,360 185,365 160,364
- C 118,362 82,350 58,326
- C 36,304 25,262 25,215 Z"""
+Authored in METRES, origin at the north-west corner of the concrete pad
+bounding box, +x east, +y south.
 
-BOWL_COPING = """M 62,194
- C 62,152 84,120 112,110
- C 134,102 154,106 172,116
- L 350,126 L 354,284 L 196,288
- C 184,302 168,314 142,318
- C 114,322 82,310 68,286
- C 61,262 62,226 62,194 Z"""
+Scale is fixed, not assumed: the Google Maps scale bar in the reference
+screenshot gives 10.15 px/m there, and that frame matches the trace frame at
+0.4950 (template correlation 0.984), so the trace frame is 20.505 px/m.
+Everything below was measured in that frame, converted, and rounded to 0.25 m.
+"""
 
-BOWL_FLOOR = """M 96,202
- C 96,170 112,148 134,141
- C 150,136 164,139 176,147
- L 322,154 L 324,258 L 198,261
- C 188,272 174,282 150,286
- C 126,289 102,278 96,258
- C 90,240 96,224 96,202 Z"""
+PX_PER_M_TRACE = 20.505
+U0, V0 = 25, 76                      # trace-frame origin of the metre grid
 
-BOXES = [
-    (683,  94, 162, 40, 'ledge'),   # north ledge / box
-    (845,  86,  30, 50, 'ledge'),   # adjoining block
-    (652, 228,  26,  86,'ledge'),   # N-S ledge (upper)
-    (658, 310,  34, 126,'ledge'),   # N-S ledge (lower)
-    (757, 252,  22, 190,'ledge'),   # N-S wall
-    (845, 322,  98, 110,'slab'),    # centre box / manny pad
-    (1052,254,  40, 186,'ledge'),   # tall east element
-    (960, 246,  92,  16,'ledge'),   # E-W edge
-    (1004,180,  26,  70,'ledge'),   # north-east upright
-    (1180,186, 106,  66,'slab'),    # NE slab
-    (1028,430,  22, 110,'ledge'),
-    (1066,430,  24, 110,'ledge'),
-    (1098,444,  52,  74,'slab'),
+PAD_L = 61.8                         # overall pad length, east-west  (measured)
+PAD_D = 24.7                         # overall pad depth, north-south (measured)
+
+def m(u, v):                         # trace px -> metres, for re-deriving
+    return ((u - U0) / PX_PER_M_TRACE, (v - V0) / PX_PER_M_TRACE)
+
+# ---------------------------------------------------------------- pad outline
+# North edge straightened to y = 0.5 (measured 0.20-0.68 across its length).
+PAD = """M 0.00,6.75
+ C 0.00,4.75 0.40,3.25 1.10,2.60
+ C 2.20,1.30 4.60,0.60 7.75,0.50
+ L 41.00,0.50
+ L 44.50,2.00 L 47.50,4.75
+ L 61.75,4.50 L 61.75,8.75 L 59.75,9.00 L 59.75,11.00
+ L 53.00,11.00 L 53.00,17.00
+ L 56.00,18.00 L 56.00,20.50 L 54.75,21.75 L 54.75,24.25
+ L 31.25,24.50 L 30.75,21.00
+ L 28.50,21.00 L 28.50,17.50 L 30.75,17.50
+ L 30.75,12.00
+ L 10.00,13.25
+ C 6.50,14.10 3.25,13.50 1.40,12.10
+ C 0.40,11.00 0.00,8.90 0.00,6.75 Z"""
+
+# ----------------------------------------------------------------------- bowl
+# Regularised kidney: straight parallel top/bottom edges, equal east corner
+# radii, one clean deep-end lobe at the south-west. Floor is a constant 1.5 m
+# inset, i.e. a uniform transition the whole way round.
+BOWL_COPING = """M 4.25,1.75
+ L 15.00,1.75 A 1.00,1.00 0 0 1 16.00,2.75
+ L 16.00,9.25 A 1.00,1.00 0 0 1 15.00,10.25
+ L 8.50,10.25
+ C 8.00,11.30 7.00,11.80 5.75,11.80
+ C 4.10,11.80 2.35,10.75 1.85,9.20
+ L 1.75,8.50 L 1.75,4.25
+ A 2.50,2.50 0 0 1 4.25,1.75 Z"""
+
+BOWL_FLOOR = """M 5.60,3.25
+ L 13.50,3.25 A 1.00,1.00 0 0 1 14.50,4.25
+ L 14.50,7.75 A 1.00,1.00 0 0 1 13.50,8.75
+ L 8.30,8.75
+ C 7.85,9.70 6.95,10.30 5.80,10.30
+ C 4.45,10.30 3.65,9.35 3.30,8.10
+ L 3.25,5.60
+ A 2.35,2.35 0 0 1 5.60,3.25 Z"""
+
+# -------------------------------------------------------------------- objects
+# kind: ledge | rail | bank | box | wedge | steps | slab | shelter
+# (x, y, w, h, kind, label)
+OBJECTS = [
+    (32.00,  0.50,  9.50, 2.25, 'bank',   'north bank + deck'),
+    (30.50,  7.50,  1.50,10.00, 'ledge',  'long ledge, N-S'),
+    (35.75,  8.50,  1.00, 9.25, 'rail',   'flat rail, N-S'),
+    (40.00, 12.00,  4.75, 5.50, 'slab',   'raised platform'),
+    (40.00, 17.75,  4.75, 1.25, 'wedge',  'triangular ledge'),
+    (38.75, 19.75,  6.50, 1.50, 'box',    'box / manny pad'),
+    (31.25, 21.50,  8.50, 0.15, 'rail',   'long flat rail, E-W'),
+    (45.50,  8.25,  4.50, 0.75, 'ledge',  'edge, E-W'),
+    (47.75,  5.00,  1.25, 3.25, 'ledge',  'upright, N-E'),
+    (50.00,  8.75,  2.00, 8.25, 'ledge',  'long ledge, east'),
+    (49.00, 17.25,  1.00, 5.50, 'ledge',  'east bar'),
+    (50.75, 17.25,  1.25, 5.50, 'ledge',  'east bar'),
+    (52.25, 18.00,  2.50, 3.50, 'slab',   'east pad'),
+    (56.25,  5.25,  5.25, 3.25, 'slab',   'north-east slab'),
+    (53.00, 11.00,  6.50, 5.75, 'shelter','roofed shelter'),
 ]
-DARKBOX = (1114, 300, 132, 118)
-DARK_RIBS = [1158, 1202]
 
-STEPS = [
-    (845, 438, 100, 14), (845, 458, 100, 12),
-    (820, 482, 136, 13), (820, 500, 136, 12),
-    (664, 505, 174, 15), (664, 526, 174, 11),
-]
-DRAIN = (678, 464, 9)
-JOINTS = [((410, 82), (410, 328)), ((840, 136), (840, 312))]
-BANK_EDGE = "M 418,134 C 450,100 470,84 494,80 L 560,76"
-OFFPAD = (315, 505, 263, 40)
+DRAIN = (31.75, 19.00, 0.40)
+JOINT = [((18.75, 0.60), (18.75, 12.35))]      # grade change, bowl deck / flat
+OFFPAD = (14.00, 21.00, 13.00, 2.00)           # separate object, off the slab
+WEDGE_HIGH_END = 'east'                        # from the ground photos
