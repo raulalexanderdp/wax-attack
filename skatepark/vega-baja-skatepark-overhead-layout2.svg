@@ -94,14 +94,7 @@
  L 10.7,18.4
  A 7.7,7.7 0 0 1 18.4,10.7 Z"  stroke-width="0.3632"/>
       <line class="joint" x1="61.5" y1="2.0" x2="61.5" y2="40.5" stroke-width="0.3027"/>
-      <rect class="obj" x="105.0" y="1.5" width="31.0" height="7.5" stroke-width="0.454"/>
-      <line class="thin" x1="105.0" y1="3.3" x2="136.0" y2="3.3" stroke-width="0.3027"/>
       <rect class="obj" x="100.0" y="24.5" width="5.0" height="33.0" stroke-width="0.454"/>
-      <line class="rail" x1="119.0" y1="28.0" x2="119.0" y2="58.5" stroke-width="0.6054"/>
-      <line class="obj" x1="117.8" y1="28.0" x2="120.2" y2="28.0" stroke-width="0.3935"/>
-      <line class="obj" x1="117.8" y1="58.5" x2="120.2" y2="58.5" stroke-width="0.3935"/>
-      <rect class="obj" x="131.0" y="39.5" width="15.5" height="18.0" stroke-width="0.454"/>
-      <rect class="thin" x="132.15" y="40.65" width="13.2" height="15.7" stroke-width="0.2119"/>
       <rect class="obj" x="131.0" y="58.0" width="15.5" height="4.0" stroke-width="0.454"/>
       <line class="thin" x1="131.0" y1="60.0" x2="146.5" y2="60.0" stroke-width="0.3027"/>
       <line class="thin" x1="131.0" y1="58.0" x2="134.41" y2="60.0" stroke-width="0.3027"/>
@@ -120,26 +113,12 @@
       <rect class="obj" x="184.5" y="17.0" width="17.0" height="10.5" stroke-width="0.454"/>
       <rect class="thin" x="185.65" y="18.15" width="14.7" height="8.2" stroke-width="0.2119"/>
       <rect class="shelter" x="174.0" y="36.0" width="21.5" height="19.0" stroke-width="0.4843"/>
-      <circle class="obj" cx="104.0" cy="62.5" r="1.25" stroke-width="0.333"/>
-      <rect class="offpad" x="46.0" y="69.0" width="42.5" height="6.5" stroke-width="0.3935"/>
   </g>
   <g id="keys"><circle class="key" cx="481.6" cy="278.8" r="9.5"/><text x="481.6" y="283.2" class="keynum" text-anchor="middle">1</text>
-    <circle class="key" cx="734.7" cy="579.5" r="9.5"/><text x="734.7" y="583.9" class="keynum" text-anchor="middle">2</text>
-    <circle class="key" cx="917.7" cy="348.2" r="9.5"/><text x="917.7" y="352.6" class="keynum" text-anchor="middle">3</text>
-    <circle class="key" cx="930.9" cy="563.0" r="9.5"/><text x="930.9" y="567.3" class="keynum" text-anchor="middle">4</text>
-    <circle class="key" cx="1086.2" cy="235.9" r="9.5"/><text x="1086.2" y="240.3" class="keynum" text-anchor="middle">5</text>
-    <circle class="key" cx="1033.3" cy="361.4" r="9.5"/><text x="1033.3" y="365.8" class="keynum" text-anchor="middle">6</text>
-    <circle class="key" cx="1063.1" cy="617.8" r="9.5"/><text x="1063.1" y="622.2" class="keynum" text-anchor="middle">7</text>
-    <circle class="key" cx="1096.1" cy="559.7" r="9.5"/><text x="1096.1" y="564.0" class="keynum" text-anchor="middle">8</text>
-    <circle class="key" cx="1207.1" cy="470.5" r="9.5"/><text x="1207.1" y="474.8" class="keynum" text-anchor="middle">9</text>
-    <circle class="key" cx="1125.8" cy="546.4" r="9.5"/><text x="1125.8" y="550.8" class="keynum" text-anchor="middle">10</text>
-    <circle class="key" cx="1326.1" cy="364.7" r="9.5"/><text x="1326.1" y="369.1" class="keynum" text-anchor="middle">11</text>
-    <circle class="key" cx="1291.0" cy="278.8" r="9.5"/><text x="1291.0" y="283.2" class="keynum" text-anchor="middle">12</text>
-    <circle class="key" cx="1327.4" cy="559.7" r="9.5"/><text x="1327.4" y="564.0" class="keynum" text-anchor="middle">13</text>
-    <circle class="key" cx="1395.4" cy="311.9" r="9.5"/><text x="1395.4" y="316.3" class="keynum" text-anchor="middle">14</text>
-    <circle class="key" cx="1449.6" cy="645.6" r="9.5"/><text x="1449.6" y="649.9" class="keynum" text-anchor="middle">15</text>
-    <circle class="key" cx="1511.1" cy="450.6" r="9.5"/><text x="1511.1" y="455.0" class="keynum" text-anchor="middle">16</text>
-    <circle class="key" cx="1565.2" cy="354.8" r="9.5"/><text x="1565.2" y="359.2" class="keynum" text-anchor="middle">17</text></g>
+    <circle class="key" cx="1056.5" cy="629.0" r="9.5"/><text x="1056.5" y="633.4" class="keynum" text-anchor="middle">2</text>
+    <circle class="key" cx="1089.5" cy="589.4" r="9.5"/><text x="1089.5" y="593.8" class="keynum" text-anchor="middle">3</text>
+    <circle class="key" cx="1125.8" cy="546.4" r="9.5"/><text x="1125.8" y="550.8" class="keynum" text-anchor="middle">4</text>
+    <circle class="key" cx="1511.1" cy="450.6" r="9.5"/><text x="1511.1" y="455.0" class="keynum" text-anchor="middle">5</text></g>
   <g id="band"><rect class="perf" x="1043.3" y="624.4" width="303.9" height="54.2"/>
     <g class="icon" transform="translate(1096.1,648.9) rotate(18) scale(0.5)"><use href="#person"/></g>
     <text x="1096.1" y="710.6" class="bandtag" text-anchor="middle">GTR</text>
@@ -164,9 +143,9 @@
   <g id="annotation">
     <g transform="translate(290,58)">
     <text x="0" y="0"  class="title">VEGA BAJA SKATE PARK</text>
-    <text x="0" y="26" class="sub">OVERHEAD LAYOUT BASE · NORTH UP</text>
+    <text x="0" y="26" class="sub">OVERHEAD LAYOUT BASE · PAGE UP = 332° (NNW)</text>
     <text x="0" y="50" class="sub">CORRE FORREST! &#183; SHOOT 26 OCT 2026</text>
-    <text x="0" y="70" class="note">REV 3 · 04 OCT 2026 &#183; 18.445°N 66.388°W · AST (UTC-4) &#183; SHEET 1 OF 1</text>
+    <text x="0" y="70" class="note">REV 4 · 04 OCT 2026</text>
     <text x="0" y="90" class="note">BAND LAYOUT 2 / SEMI-CIRCLE &#183; INDICATIVE, NOT SURVEYED</text>
     </g>
     <g transform="translate(1330,58)">
@@ -180,45 +159,19 @@
     <text x="0"   y="68" class="legend" font-weight="700">C</text>
     <text x="22"  y="68" class="legend">70-200 MM</text>
     <text x="128" y="68" class="legend">CLOSE / INSTRUMENTS</text>
-    <text x="0" y="105" class="note">CONES AT THE WIDE END, FULL FRAME</text>
     </g>
     <g transform="translate(290,742)">
     <text x="0" y="0" class="sub">KEY</text>
-    <circle class="key" cx="9.0" cy="21.5" r="9.0"/><text x="9.0" y="25.6" class="keynum" text-anchor="middle">1</text>
-    <text x="26" y="26" class="legend">BOWL</text>
-    <circle class="key" cx="9.0" cy="42.5" r="9.0"/><text x="9.0" y="46.6" class="keynum" text-anchor="middle">2</text>
-    <text x="26" y="47" class="legend">OFF-PAD OBJECT *</text>
-    <circle class="key" cx="9.0" cy="63.5" r="9.0"/><text x="9.0" y="67.6" class="keynum" text-anchor="middle">3</text>
-    <text x="26" y="68" class="legend">LONG LEDGE, N-S *</text>
-    <circle class="key" cx="9.0" cy="84.5" r="9.0"/><text x="9.0" y="88.6" class="keynum" text-anchor="middle">4</text>
-    <text x="26" y="89" class="legend">DRAIN</text>
-    <circle class="key" cx="9.0" cy="105.5" r="9.0"/><text x="9.0" y="109.6" class="keynum" text-anchor="middle">5</text>
-    <text x="26" y="110" class="legend">NORTH BANK + DECK</text>
-    <circle class="key" cx="9.0" cy="126.5" r="9.0"/><text x="9.0" y="130.6" class="keynum" text-anchor="middle">6</text>
-    <text x="26" y="131" class="legend">FLAT RAIL, N-S *</text>
-    <circle class="key" cx="252.0" cy="21.5" r="9.0"/><text x="252.0" y="25.6" class="keynum" text-anchor="middle">7</text>
-    <text x="269" y="26" class="legend">LONG FLAT RAIL, E-W</text>
-    <circle class="key" cx="252.0" cy="42.5" r="9.0"/><text x="252.0" y="46.6" class="keynum" text-anchor="middle">8</text>
-    <text x="269" y="47" class="legend">BOX / MANNY PAD</text>
-    <circle class="key" cx="252.0" cy="63.5" r="9.0"/><text x="252.0" y="67.6" class="keynum" text-anchor="middle">9</text>
-    <text x="269" y="68" class="legend">RAISED PLATFORM *</text>
-    <circle class="key" cx="252.0" cy="84.5" r="9.0"/><text x="252.0" y="88.6" class="keynum" text-anchor="middle">10</text>
-    <text x="269" y="89" class="legend">TRIANGULAR LEDGE</text>
-    <circle class="key" cx="252.0" cy="105.5" r="9.0"/><text x="252.0" y="109.6" class="keynum" text-anchor="middle">11</text>
-    <text x="269" y="110" class="legend">EDGE, E-W *</text>
-    <circle class="key" cx="252.0" cy="126.5" r="9.0"/><text x="252.0" y="130.6" class="keynum" text-anchor="middle">12</text>
-    <text x="269" y="131" class="legend">UPRIGHT *</text>
-    <circle class="key" cx="495.0" cy="21.5" r="9.0"/><text x="495.0" y="25.6" class="keynum" text-anchor="middle">13</text>
-    <text x="512" y="26" class="legend">EAST BARS *</text>
-    <circle class="key" cx="495.0" cy="42.5" r="9.0"/><text x="495.0" y="46.6" class="keynum" text-anchor="middle">14</text>
-    <text x="512" y="47" class="legend">LONG LEDGE, EAST *</text>
-    <circle class="key" cx="495.0" cy="63.5" r="9.0"/><text x="495.0" y="67.6" class="keynum" text-anchor="middle">15</text>
-    <text x="512" y="68" class="legend">EAST PAD *</text>
-    <circle class="key" cx="495.0" cy="84.5" r="9.0"/><text x="495.0" y="88.6" class="keynum" text-anchor="middle">16</text>
-    <text x="512" y="89" class="legend">ROOFED SHELTER</text>
-    <circle class="key" cx="495.0" cy="105.5" r="9.0"/><text x="495.0" y="109.6" class="keynum" text-anchor="middle">17</text>
-    <text x="512" y="110" class="legend">NORTH-EAST SLAB *</text>
-    <text x="0" y="166" class="note">* FOOTPRINT MEASURED, TYPE NOT CONFIRMED ON THE GROUND &#183; NO HEIGHTS SURVEYED</text>
+    <circle class="key" cx="9.0" cy="23.5" r="9.0"/><text x="9.0" y="27.6" class="keynum" text-anchor="middle">1</text>
+    <text x="26" y="28" class="legend">BOWL</text>
+    <circle class="key" cx="9.0" cy="46.5" r="9.0"/><text x="9.0" y="50.6" class="keynum" text-anchor="middle">2</text>
+    <text x="26" y="51" class="legend">LONG FLAT RAIL, E-W</text>
+    <circle class="key" cx="9.0" cy="69.5" r="9.0"/><text x="9.0" y="73.6" class="keynum" text-anchor="middle">3</text>
+    <text x="26" y="74" class="legend">BOX / MANNY PAD</text>
+    <circle class="key" cx="9.0" cy="92.5" r="9.0"/><text x="9.0" y="96.6" class="keynum" text-anchor="middle">4</text>
+    <text x="26" y="97" class="legend">TRIANGULAR LEDGE</text>
+    <circle class="key" cx="9.0" cy="115.5" r="9.0"/><text x="9.0" y="119.6" class="keynum" text-anchor="middle">5</text>
+    <text x="26" y="120" class="legend">ROOFED SHELTER</text>
     </g>
     <g transform="translate(290.0,962.0)">
     <rect x="0" y="0" width="165.2" height="11" fill="#000"/>
@@ -233,53 +186,54 @@
     </g>
     <g transform="translate(0,0)">
     <circle class="dial" cx="1505" cy="762" r="70"/>
-    <line class="dialtick" x1="1505.0" y1="692.0" x2="1505.0" y2="701.0"/>
-    <line class="dialtick" x1="1523.1" y1="694.4" x2="1521.8" y2="699.2"/>
-    <line class="dialtick" x1="1540.0" y1="701.4" x2="1537.5" y2="705.7"/>
-    <line class="dialtick" x1="1554.5" y1="712.5" x2="1551.0" y2="716.0"/>
-    <line class="dialtick" x1="1565.6" y1="727.0" x2="1561.3" y2="729.5"/>
-    <line class="dialtick" x1="1572.6" y1="743.9" x2="1567.8" y2="745.2"/>
-    <line class="dialtick" x1="1575.0" y1="762.0" x2="1566.0" y2="762.0"/>
-    <line class="dialtick" x1="1572.6" y1="780.1" x2="1567.8" y2="778.8"/>
-    <line class="dialtick" x1="1565.6" y1="797.0" x2="1561.3" y2="794.5"/>
-    <line class="dialtick" x1="1554.5" y1="811.5" x2="1551.0" y2="808.0"/>
-    <line class="dialtick" x1="1540.0" y1="822.6" x2="1537.5" y2="818.3"/>
-    <line class="dialtick" x1="1523.1" y1="829.6" x2="1521.8" y2="824.8"/>
-    <line class="dialtick" x1="1505.0" y1="832.0" x2="1505.0" y2="823.0"/>
-    <line class="dialtick" x1="1486.9" y1="829.6" x2="1488.2" y2="824.8"/>
-    <line class="dialtick" x1="1470.0" y1="822.6" x2="1472.5" y2="818.3"/>
-    <line class="dialtick" x1="1455.5" y1="811.5" x2="1459.0" y2="808.0"/>
-    <line class="dialtick" x1="1444.4" y1="797.0" x2="1448.7" y2="794.5"/>
-    <line class="dialtick" x1="1437.4" y1="780.1" x2="1442.2" y2="778.8"/>
-    <line class="dialtick" x1="1435.0" y1="762.0" x2="1444.0" y2="762.0"/>
-    <line class="dialtick" x1="1437.4" y1="743.9" x2="1442.2" y2="745.2"/>
-    <line class="dialtick" x1="1444.4" y1="727.0" x2="1448.7" y2="729.5"/>
-    <line class="dialtick" x1="1455.5" y1="712.5" x2="1459.0" y2="716.0"/>
-    <line class="dialtick" x1="1470.0" y1="701.4" x2="1472.5" y2="705.7"/>
-    <line class="dialtick" x1="1486.9" y1="694.4" x2="1488.2" y2="699.2"/>
-    <path class="sunarc" d="M 1573.2,777.9 A 70,70 0 0 1 1436.9,778.1"/>
-    <line class="dialtick" x1="1569.9" y1="788.2" x2="1578.3" y2="791.6"/>
-    <text x="1593.1" y="801.6" class="dialnum" text-anchor="middle">08</text>
-    <line class="dialtick" x1="1557.2" y1="808.7" x2="1563.9" y2="814.7"/>
-    <text x="1575.8" y="829.3" class="dialnum" text-anchor="middle">10</text>
-    <line class="dialtick" x1="1510.5" y1="831.8" x2="1511.2" y2="840.8"/>
-    <text x="1512.4" y="860.7" class="dialnum" text-anchor="middle">12</text>
-    <line class="dialtick" x1="1457.0" y1="813.0" x2="1450.9" y2="819.5"/>
-    <text x="1439.9" y="835.2" class="dialnum" text-anchor="middle">14</text>
-    <line class="dialtick" x1="1441.2" y1="790.9" x2="1433.0" y2="794.6"/>
-    <text x="1418.5" y="805.2" class="dialnum" text-anchor="middle">16</text>
-    <line class="sunray" x1="1446.7" y1="788.4" x2="1486.8" y2="770.2"/>
-    <polygon class="sunhead" points="1486.8,770.2 1494.4,759.7 1499.7,771.5"/>
-    <path class="narrow" d="M 1505,680 L 1513,698 L 1505,693 L 1497,698 Z"/>
-    <text x="1505" y="672" class="tick" text-anchor="middle">N</text>
+    <line class="dialtick" x1="1537.9" y1="700.2" x2="1533.6" y2="708.1"/>
+    <line class="dialtick" x1="1552.7" y1="710.8" x2="1549.3" y2="714.5"/>
+    <line class="dialtick" x1="1564.4" y1="724.9" x2="1560.1" y2="727.6"/>
+    <line class="dialtick" x1="1571.9" y1="741.5" x2="1567.2" y2="743.0"/>
+    <line class="dialtick" x1="1575.0" y1="759.6" x2="1570.0" y2="759.7"/>
+    <line class="dialtick" x1="1573.2" y1="777.7" x2="1568.3" y2="776.6"/>
+    <line class="dialtick" x1="1566.8" y1="794.9" x2="1558.9" y2="790.6"/>
+    <line class="dialtick" x1="1556.2" y1="809.7" x2="1552.5" y2="806.3"/>
+    <line class="dialtick" x1="1542.1" y1="821.4" x2="1539.4" y2="817.1"/>
+    <line class="dialtick" x1="1525.5" y1="828.9" x2="1524.0" y2="824.2"/>
+    <line class="dialtick" x1="1507.4" y1="832.0" x2="1507.3" y2="827.0"/>
+    <line class="dialtick" x1="1489.3" y1="830.2" x2="1490.4" y2="825.3"/>
+    <line class="dialtick" x1="1472.1" y1="823.8" x2="1476.4" y2="815.9"/>
+    <line class="dialtick" x1="1457.3" y1="813.2" x2="1460.7" y2="809.5"/>
+    <line class="dialtick" x1="1445.6" y1="799.1" x2="1449.9" y2="796.4"/>
+    <line class="dialtick" x1="1438.1" y1="782.5" x2="1442.8" y2="781.0"/>
+    <line class="dialtick" x1="1435.0" y1="764.4" x2="1440.0" y2="764.3"/>
+    <line class="dialtick" x1="1436.8" y1="746.3" x2="1441.7" y2="747.4"/>
+    <line class="dialtick" x1="1443.2" y1="729.1" x2="1451.1" y2="733.4"/>
+    <line class="dialtick" x1="1453.8" y1="714.3" x2="1457.5" y2="717.7"/>
+    <line class="dialtick" x1="1467.9" y1="702.6" x2="1470.6" y2="706.9"/>
+    <line class="dialtick" x1="1484.5" y1="695.1" x2="1486.0" y2="699.8"/>
+    <line class="dialtick" x1="1502.6" y1="692.0" x2="1502.7" y2="697.0"/>
+    <line class="dialtick" x1="1520.7" y1="693.8" x2="1519.6" y2="698.7"/>
+    <path class="sunarc" d="M 1557.7,808.1 A 70,70 0 0 1 1437.3,744.3"/>
+    <line class="dialtick" x1="1550.0" y1="815.6" x2="1555.8" y2="822.5"/>
+    <text x="1566.1" y="838.8" class="dialnum" text-anchor="middle">08</text>
+    <line class="dialtick" x1="1529.2" y1="827.7" x2="1532.3" y2="836.1"/>
+    <text x="1537.8" y="855.2" class="dialnum" text-anchor="middle">10</text>
+    <line class="dialtick" x1="1477.0" y1="826.2" x2="1473.5" y2="834.4"/>
+    <text x="1467.1" y="853.1" class="dialnum" text-anchor="middle">12</text>
+    <line class="dialtick" x1="1438.7" y1="784.5" x2="1430.2" y2="787.4"/>
+    <text x="1415.0" y="796.5" class="dialnum" text-anchor="middle">14</text>
+    <line class="dialtick" x1="1435.1" y1="757.5" x2="1426.2" y2="757.0"/>
+    <text x="1410.2" y="760.0" class="dialnum" text-anchor="middle">16</text>
+    <line class="sunray" x1="1441.1" y1="757.9" x2="1485.0" y2="760.7"/>
+    <polygon class="sunhead" points="1485.0,760.7 1492.6,750.2 1498.0,762.0"/>
+    <path class="narrow" d="M 1547.3,682.5 L 1546.3,701.3 L 1532.2,693.8 Z"/>
+    <text x="1554.8" y="673.4" class="tick" text-anchor="middle">N</text>
     </g>
-    <g transform="translate(1392,902)">
-    <text x="0" y="0" class="sub">SUN &#183; 26 OCT 2026 &#183; HOURS AST</text>
-    <text x="0" y="24" class="note">RISE 06:23 &#183; SET 17:56</text>
+    <g transform="translate(1362,902)">
+    <text x="0" y="0" class="sub">SUN &#183; 26 OCT 2026</text>
+    <text x="0" y="24" class="note">HOURS AST &#183; RISE 06:23 &#183; SET 17:56</text>
     <text x="0" y="41" class="note">NOON 12:09 &#183; 59&#176; DUE SOUTH</text>
-    <text x="0" y="58" class="note">16:00 &#183; 246&#176; WSW AT 25&#176;</text>
-    <text x="0" y="75" class="note">BEST 15:30-17:00,</text>
-    <text x="0" y="92" class="note">RAKING FROM CAMERA RIGHT</text>
+    <text x="0" y="58" class="note">11:00 SUN BEHIND CAM A &#8212; FLATTEST</text>
+    <text x="0" y="75" class="note">16:00 &#183; 246&#176; WSW AT 25&#176;</text>
+    <text x="0" y="92" class="note">BEST 15:30-17:00,</text>
+    <text x="0" y="109" class="note">RAKING FROM CAMERA LEFT</text>
     </g>
   </g>
 </svg>

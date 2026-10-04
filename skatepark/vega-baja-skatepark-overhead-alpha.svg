@@ -94,14 +94,7 @@
  L 10.7,18.4
  A 7.7,7.7 0 0 1 18.4,10.7 Z"  stroke-width="0.3632"/>
       <line class="joint" x1="61.5" y1="2.0" x2="61.5" y2="40.5" stroke-width="0.3027"/>
-      <rect class="obj" x="105.0" y="1.5" width="31.0" height="7.5" stroke-width="0.454"/>
-      <line class="thin" x1="105.0" y1="3.3" x2="136.0" y2="3.3" stroke-width="0.3027"/>
       <rect class="obj" x="100.0" y="24.5" width="5.0" height="33.0" stroke-width="0.454"/>
-      <line class="rail" x1="119.0" y1="28.0" x2="119.0" y2="58.5" stroke-width="0.6054"/>
-      <line class="obj" x1="117.8" y1="28.0" x2="120.2" y2="28.0" stroke-width="0.3935"/>
-      <line class="obj" x1="117.8" y1="58.5" x2="120.2" y2="58.5" stroke-width="0.3935"/>
-      <rect class="obj" x="131.0" y="39.5" width="15.5" height="18.0" stroke-width="0.454"/>
-      <rect class="thin" x="132.15" y="40.65" width="13.2" height="15.7" stroke-width="0.2119"/>
       <rect class="obj" x="131.0" y="58.0" width="15.5" height="4.0" stroke-width="0.454"/>
       <line class="thin" x1="131.0" y1="60.0" x2="146.5" y2="60.0" stroke-width="0.3027"/>
       <line class="thin" x1="131.0" y1="58.0" x2="134.41" y2="60.0" stroke-width="0.3027"/>
@@ -120,8 +113,6 @@
       <rect class="obj" x="184.5" y="17.0" width="17.0" height="10.5" stroke-width="0.454"/>
       <rect class="thin" x="185.65" y="18.15" width="14.7" height="8.2" stroke-width="0.2119"/>
       <rect class="shelter" x="174.0" y="36.0" width="21.5" height="19.0" stroke-width="0.4843"/>
-      <circle class="obj" cx="104.0" cy="62.5" r="1.25" stroke-width="0.333"/>
-      <rect class="offpad" x="46.0" y="69.0" width="42.5" height="6.5" stroke-width="0.3935"/>
   </g>
   <g id="keys"></g>
   <g id="band"></g>

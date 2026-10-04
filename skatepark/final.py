@@ -64,35 +64,25 @@ def park():
         o.append(f'<line class="joint" x1="{f(a)}" y1="{f(b)}" x2="{f(c)}" y2="{f(d)}" stroke-width="{w(2.0)}"/>')
     for ob in G.OBJECTS:
         o.append(draw(ob))
-    a, b, r = G.DRAIN
-    o.append(f'<circle class="obj" cx="{f(a)}" cy="{f(b)}" r="{f(r)}" stroke-width="{w(2.2)}"/>')
-    x, y, ww, hh = G.OFFPAD
-    o.append(f'<rect class="offpad" x="{f(x)}" y="{f(y)}" width="{f(ww)}" height="{f(hh)}" stroke-width="{w(2.6)}"/>')
     return "\n      ".join(o)
 
 # ------------------------------------------------------------------- the key
 def keyed_items():
-    items = [(o[6], o[5], o[7], o[8]) for o in G.OBJECTS if o[6]]
-    items += [(k[0], k[1], k[2], k[3]) for k in G.EXTRA_KEYS]
-    return sorted(items)
+    return sorted([(o[6], o[5], o[7]) for o in G.OBJECTS if o[6]] + list(G.EXTRA_KEYS))
 
 def disc(x_px, y_px, text, r=9.5, cls='key'):
     return (f'<circle class="{cls}" cx="{x_px:.1f}" cy="{y_px:.1f}" r="{r}"/>'
             f'<text x="{x_px:.1f}" y="{y_px + r*0.46:.1f}" class="keynum" text-anchor="middle">{text}</text>')
 
 def key_markers():
-    return "\n    ".join(disc(cx(p[0]), cy(p[1]), n) for n, _l, p, _v in keyed_items() if p)
+    return "\n    ".join(disc(cx(p[0]), cy(p[1]), n) for n, _l, p in keyed_items() if p)
 
-def keylegend(x, y, cols=3, rows=6, colw=243, step=21):
+def keylegend(x, y, step=23):
     o = [f'<g transform="translate({x},{y})">', '<text x="0" y="0" class="sub">KEY</text>']
-    for i, (n, label, _p, ok) in enumerate(keyed_items()):
-        c, r = divmod(i, rows)
-        if c >= cols: break
-        px, py = c*colw, 26 + r*step
-        o.append(disc(px + 9, py - 4.5, n, 9.0))
-        o.append(f'<text x="{px+26}" y="{py}" class="legend">{label}{"" if ok else " *"}</text>')
-    o.append(f'<text x="0" y="{26 + rows*step + 14}" class="note">'
-             f'* FOOTPRINT MEASURED, TYPE NOT CONFIRMED ON THE GROUND &#183; NO HEIGHTS SURVEYED</text>')
+    for i, (n, label, _p) in enumerate(keyed_items()):
+        py = 28 + i*step
+        o.append(disc(9, py - 4.5, n, 9.0))
+        o.append(f'<text x="26" y="{py}" class="legend">{label}</text>')
     o.append('</g>')
     return "\n    ".join(o)
 
@@ -168,8 +158,8 @@ def sundial(ox, oy, r=76):
     y_, mo, d = SUN.DATE
     rise, noon = SUN._event(y_, mo, d, True)
     sett, _ = SUN._event(y_, mo, d, False)
-    def pt(az, rad):
-        a = math.radians(az)
+    def pt(az, rad):                       # true bearing -> page position
+        a = math.radians(az - G.UP_BEARING)
         return ox + math.sin(a)*rad, oy - math.cos(a)*rad
     az_r = SUN.solar(y_, mo, d, rise + 0.05)[0]
     az_s = SUN.solar(y_, mo, d, sett - 0.05)[0]
@@ -193,20 +183,32 @@ def sundial(ox, oy, r=76):
     o.append(f'<polygon class="sunhead" points="{c:.1f},{e:.1f} '
              f'{c + math.sin(math.radians(az+150))*13:.1f},{e - math.cos(math.radians(az+150))*13:.1f} '
              f'{c + math.sin(math.radians(az-150))*13:.1f},{e - math.cos(math.radians(az-150))*13:.1f}"/>')
-    o.append(f'<path class="narrow" d="M {ox},{oy-r-12} L {ox+8},{oy-r+6} L {ox},{oy-r+1} L {ox-8},{oy-r+6} Z"/>')
-    o.append(f'<text x="{ox}" y="{oy-r-20}" class="tick" text-anchor="middle">N</text>')
+    tip = pt(0, r + 20); mid = pt(0, r + 3)
+    na = math.radians(-G.UP_BEARING); px_, py_ = math.cos(na), math.sin(na)
+    o.append(f'<path class="narrow" d="M {tip[0]:.1f},{tip[1]:.1f} '
+             f'L {mid[0]+px_*8:.1f},{mid[1]+py_*8:.1f} L {mid[0]-px_*8:.1f},{mid[1]-py_*8:.1f} Z"/>')
+    lab = pt(0, r + 36)
+    o.append(f'<text x="{lab[0]:.1f}" y="{lab[1]+5:.1f}" class="tick" text-anchor="middle">N</text>')
     o.append('</g>')
     return "\n    ".join(o), rise, noon, sett
+
+def rel_to_camera(az):
+    """Signed angle from the camera's look direction; + is camera right,
+    +/-180 is straight behind the camera (flat frontal light on the band)."""
+    return ((az - G.CAM_BEARING + 180) % 360) - 180
 
 def sunnotes(x, y, rise, noon, sett):
     el_noon = SUN.solar(*SUN.DATE, noon)[1]
     az16, el16 = SUN.solar(*SUN.DATE, 16.0)[:2]
-    lines = [f'SUN &#183; {G.SHOOT} &#183; HOURS AST',
-             f'RISE {SUN.hm(rise)} &#183; SET {SUN.hm(sett)}',
+    flat = max((h/4 for h in range(4*6, 4*18)),
+               key=lambda h: (abs(rel_to_camera(SUN.solar(*SUN.DATE, h)[0])), ))
+    lines = [f'SUN &#183; {G.SHOOT}',
+             f'HOURS AST &#183; RISE {SUN.hm(rise)} &#183; SET {SUN.hm(sett)}',
              f'NOON {SUN.hm(noon)} &#183; {el_noon:.0f}&#176; DUE SOUTH',
+             f'{SUN.hm(flat)} SUN BEHIND CAM A &#8212; FLATTEST',
              f'16:00 &#183; {az16:.0f}&#176; WSW AT {el16:.0f}&#176;',
              'BEST 15:30-17:00,',
-             'RAKING FROM CAMERA RIGHT']
+             'RAKING FROM CAMERA LEFT']
     o = [f'<g transform="translate({x},{y})">']
     for i, t in enumerate(lines):
         cls = 'sub' if i == 0 else 'note'
@@ -222,7 +224,7 @@ def titleblock(x, y, show_band=False):
         f'<text x="0" y="0"  class="title">{G.PROJECT}</text>',
         f'<text x="0" y="26" class="sub">{G.SUBTITLE}</text>',
         f'<text x="0" y="50" class="sub">{G.BAND_NAME} &#183; SHOOT {G.SHOOT}</text>',
-        f'<text x="0" y="70" class="note">{G.REV} &#183; {G.SITE} &#183; SHEET 1 OF 1</text>', extra, '</g>'])
+        f'<text x="0" y="70" class="note">{G.REV}</text>', extra, '</g>'])
 
 def scalebar(x, y):
     seg = 25 * S
@@ -244,7 +246,6 @@ def camlegend(x, y):
         o.append(f'<text x="0"   y="{yy}" class="legend" font-weight="700">{tag}</text>')
         o.append(f'<text x="22"  y="{yy}" class="legend">{lens}</text>')
         o.append(f'<text x="128" y="{yy}" class="legend">{role}</text>')
-    o.append(f'<text x="0" y="{26+len(G.CAMERAS)*21+16}" class="note">CONES AT THE WIDE END, FULL FRAME</text>')
     o.append('</g>')
     return "\n    ".join(o)
 
@@ -309,7 +310,7 @@ def svg(transparent=False, annotate=True, grid=False, cams=True, show_band=False
     {keylegend(MARGIN_X, 742)}
     {scalebar(MARGIN_X, 962)}
     {dial}
-    {sunnotes(1392, 902, rise, noon, sett)}
+    {sunnotes(1362, 902, rise, noon, sett)}
   </g>'''
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
   <title>{G.PROJECT} - overhead layout, {G.BAND_NAME}, {G.SHOOT}</title>
