@@ -58,24 +58,7 @@
   </g>
   </defs>
   <rect width="1920" height="1080" fill="#fff"/>
-  <g class="grid">
-    <line x1="290.00" y1="116.0" x2="290.00" y2="699.2"/>
-    <line x1="422.15" y1="116.0" x2="422.15" y2="699.2"/>
-    <line x1="554.30" y1="116.0" x2="554.30" y2="699.2"/>
-    <line x1="686.45" y1="116.0" x2="686.45" y2="699.2"/>
-    <line x1="818.60" y1="116.0" x2="818.60" y2="699.2"/>
-    <line x1="950.75" y1="116.0" x2="950.75" y2="699.2"/>
-    <line x1="1082.90" y1="116.0" x2="1082.90" y2="699.2"/>
-    <line x1="1215.05" y1="116.0" x2="1215.05" y2="699.2"/>
-    <line x1="1347.20" y1="116.0" x2="1347.20" y2="699.2"/>
-    <line x1="1479.35" y1="116.0" x2="1479.35" y2="699.2"/>
-    <line x1="1611.50" y1="116.0" x2="1611.50" y2="699.2"/>
-    <line x1="290" y1="140.00" x2="1630" y2="140.00"/>
-    <line x1="290" y1="272.15" x2="1630" y2="272.15"/>
-    <line x1="290" y1="404.30" x2="1630" y2="404.30"/>
-    <line x1="290" y1="536.45" x2="1630" y2="536.45"/>
-    <line x1="290" y1="668.60" x2="1630" y2="668.60"/>
-    </g>
+  
   <g id="park" transform="translate(290,140) scale(6.60750)">
       <path class="pad" d="M 0.0,22.1
  C 0.0,15.6 1.3,10.7 3.6,8.5
@@ -137,7 +120,19 @@
       <circle class="obj" cx="104.0" cy="62.5" r="1.25" stroke-width="0.333"/>
       <rect class="offpad" x="46.0" y="69.0" width="42.5" height="6.5" stroke-width="0.3935"/>
   </g>
-  
+  <rect class="perf" x="1043.3" y="614.4" width="303.9" height="54.2"/>
+    <g class="icon" transform="translate(1096.1,638.9) rotate(18) scale(0.5)"><use href="#person"/></g>
+    <circle class="key" cx="1077.1" cy="621.9" r="10"/>
+    <text x="1077.1" y="626.4" class="keynum" text-anchor="middle">1</text>
+    <g class="icon" transform="translate(1185.3,645.5) rotate(0) scale(0.5)"><use href="#person"/></g>
+    <circle class="key" cx="1166.3" cy="628.5" r="10"/>
+    <text x="1166.3" y="633.0" class="keynum" text-anchor="middle">2</text>
+    <g class="icon" transform="translate(1241.5,632.3) rotate(-8) scale(0.5)"><use href="#person"/></g>
+    <circle class="key" cx="1222.5" cy="615.3" r="10"/>
+    <text x="1222.5" y="619.8" class="keynum" text-anchor="middle">3</text>
+    <g class="icon" transform="translate(1300.9,638.9) rotate(-18) scale(0.5)"><use href="#person"/></g>
+    <circle class="key" cx="1281.9" cy="621.9" r="10"/>
+    <text x="1281.9" y="626.4" class="keynum" text-anchor="middle">4</text>
   <path class="cone" d="M 1200.2,814.2 L 1115.5,649.4 L 1284.9,649.4 Z"/>
     <g class="icon" transform="translate(1200.2,860.2) rotate(0.0)"><use href="#cam"/></g>
     <text x="1200.2" y="932.2" class="camtag" text-anchor="middle">CAM A</text>
@@ -165,7 +160,21 @@
     <text x="128" y="68" class="legend">CLOSE / INSTRUMENTS</text>
     <text x="0" y="105" class="note">CONES AT THE WIDE END, FULL FRAME</text>
     </g>
-    
+    <g transform="translate(290,790)">
+    <text x="0" y="0" class="sub">BAND &#183; LAYOUT 2 / SEMI-CIRCLE</text>
+    <circle class="key" cx="7" cy="21" r="10"/>
+    <text x="7" y="25.5" class="keynum" text-anchor="middle">1</text>
+    <text x="28" y="26" class="legend">GUITAR</text>
+    <circle class="key" cx="7" cy="42" r="10"/>
+    <text x="7" y="46.5" class="keynum" text-anchor="middle">2</text>
+    <text x="28" y="47" class="legend">VOCALS / GUITAR</text>
+    <circle class="key" cx="7" cy="63" r="10"/>
+    <text x="7" y="67.5" class="keynum" text-anchor="middle">3</text>
+    <text x="28" y="68" class="legend">DRUMS</text>
+    <circle class="key" cx="7" cy="84" r="10"/>
+    <text x="7" y="88.5" class="keynum" text-anchor="middle">4</text>
+    <text x="28" y="89" class="legend">BASS</text>
+    </g>
     <g transform="translate(290.0,1032.0)">
     <rect x="0" y="0" width="165.2" height="11" fill="#000"/>
     <rect x="165.2" y="0" width="165.2" height="11" fill="none" stroke="#000" stroke-width="2"/>

@@ -1,91 +1,104 @@
 # Vega Baja Skate Park — overhead layout base
 
 Black-and-white overhead plate for production layouts. 16:9, white background,
-black linework, generous margins on all four sides for callouts, pins and text.
+black linework, wide margins for callouts and text. **All units are feet.**
 
 ## Files
 
-| File | Use |
+| File | Contents |
 |---|---|
-| `vega-baja-skatepark-overhead.svg/.png` | Main plate — title, scale bar, north arrow, Cam A |
-| `vega-baja-skatepark-overhead-clean.svg/.png` | Artwork only |
-| `vega-baja-skatepark-overhead-alpha.svg/.png` | Transparent background, for compositing |
-| `vega-baja-skatepark-overhead-grid.svg/.png` | Main plate + 5 m grid |
+| `vega-baja-skatepark-overhead` | Park + Cam A/B/C + legend, scale, north |
+| `vega-baja-skatepark-overhead-layout2` | The above + band in Layout 2 / semi-circle |
+| `vega-baja-skatepark-overhead-clean` | Park artwork only |
+| `vega-baja-skatepark-overhead-alpha` | Park artwork only, transparent background |
+| `vega-baja-skatepark-overhead-grid` | Main plate + 20 ft grid |
 
-PNGs are 3840×2160. SVGs are 1920×1080 user units and scale losslessly —
-SVG for Illustrator/Affinity, PNG for Resolve/Premiere/AE.
+Each exists as `.svg` (1920×1080 user units, scales losslessly — Illustrator,
+Affinity) and `.png` (3840×2160 — Resolve, Premiere, AE).
 
-Drawing area is inset 190 px left/right, 215 top, 250 bottom at 1920×1080.
+Drawing area is inset 290 px left/right, 140 top. The bottom ~400 px carries the
+camera row, the band key and the scale bar.
 
 ## Scale — confirmed
 
-**Pad is 61.8 m × 24.7 m.** 1 m = 24.92 px on the 1920×1080 canvas.
+**Pad is 202.8 ft × 81.0 ft.** 1 ft = 6.608 px on the 1920×1080 canvas.
 
-Derived, not assumed:
-1. The Google Maps scale bar gives 10.15 px/m in that screenshot — the 50 ft
-   bar (155 px) and the 20 m bar (203 px) agree to within 0.2%.
-2. That screenshot matches the trace frame at 0.4950 scale (template
-   correlation 0.984), so the trace frame is 20.505 px/m.
-3. Every dimension below was measured in the trace frame, converted, and
-   rounded to 0.25 m.
+Derived, not assumed: the Google Maps scale bar gives 10.15 px/m in that
+screenshot (the 50 ft bar at 155 px and the 20 m bar at 203 px agree to 0.2%),
+and that frame matches the trace frame at 0.4950 by template correlation 0.984,
+so the trace frame is 6.250 px/ft. Everything was measured there, converted,
+and rounded to 0.5 ft. North is up.
 
-North is up, inherited from the Google Maps screenshot.
+## Cameras
+
+All three sit south of the pad, shooting north, on one line 28 ft south of the
+pad's south edge.
+
+| | Lens | Covers | Position (ft) | Throw |
+|---|---|---|---|---|
+| **A** | 35 mm | Band wide, centre | 137.75, 109.0 | 35 ft |
+| **B** | 70–200 mm | Close / vocals | 152.5, 109.0 | 37 ft |
+| **C** | 70–200 mm | Close / instruments | 121.0, 109.0 | 42 ft |
+
+**Cam A is centred on the box and the long rail** — all three share x = 137.75 ft.
+
+Cam A's distance is not arbitrary: 35 mm on full frame is a 54.4° horizontal
+field, so covering the ~36 ft band width needs 35 ft of throw. That puts Cam A
+about 28 ft south of the concrete, out on the apron. If you shoot Super 35 the
+same framing needs ~48 ft, which is into the road — worth checking before the
+day.
+
+B sits right of A and C left of A, both cross-shooting. **C's position is my
+call** — you specified B's side but not C's; left of A gives cross coverage of
+the drums and the right-hand players. Say the word if you want it elsewhere.
+
+FOV cones are drawn at each lens's wide end on full frame (35 mm → 54.4°,
+70 mm → 28.8°).
+
+## Band — Layout 2
+
+Indicative, not surveyed: a shallow semi-circle on the pad south of the long
+rail, keyed 1–4. Move freely; the icons are a symbol in the SVG `<defs>`.
 
 ## Element schedule
 
-All sizes in metres, origin at the north-west corner of the pad bounding box,
-+x east, +y south. No two objects overlap — `final.py` asserts this at build.
+Origin at the north-west corner of the pad bounding box, +x east, +y south.
+No two objects overlap — `final.py` asserts it at build.
 
 | Element | x, y | size |
 |---|---|---|
-| North bank + deck | 32.00, 0.50 | 9.50 × 2.25 |
-| Long ledge, N–S | 30.50, 7.50 | 1.50 × 10.00 |
-| Flat rail, N–S | 35.75, 8.50 | 1.00 × 9.25 |
-| Raised platform | 40.00, 12.00 | 4.75 × 5.50 |
-| Triangular ledge | 40.00, 17.75 | 4.75 × 1.25 |
-| Box / manny pad | 38.75, 19.75 | 6.50 × 1.50 |
-| Long flat rail, E–W | 31.25, 21.50 | 8.50 |
-| Edge, E–W | 45.50, 8.25 | 4.50 × 0.75 |
-| Upright, N-E | 47.75, 5.00 | 1.25 × 3.25 |
-| Long ledge, east | 50.00, 8.75 | 2.00 × 8.25 |
-| East bars (×2) | 49.00 / 50.75, 17.25 | 1.00 / 1.25 × 5.50 |
-| East pad | 52.25, 18.00 | 2.50 × 3.50 |
-| North-east slab | 56.25, 5.25 | 5.25 × 3.25 |
-| Roofed shelter | 53.00, 11.00 | 6.50 × 5.75 |
-| Bowl, coping | — | 14.25 × 10.05 overall |
+| North bank + deck | 105.0, 1.5 | 31.0 × 7.5 |
+| Long ledge, N–S | 100.0, 24.5 | 5.0 × 33.0 |
+| Flat rail, N–S | 117.5, 28.0 | 3.0 × 30.5 |
+| Raised platform | 131.0, 39.5 | 15.5 × 18.0 |
+| Triangular ledge | 131.0, 58.0 | 15.5 × 4.0 |
+| Box / manny pad | 127.0, 65.0 | 21.5 × 5.0 |
+| Long flat rail, E–W | 123.75, 70.5 | 28.0 |
+| Edge, E–W | 149.5, 27.0 | 14.5 × 2.5 |
+| Upright, N-E | 156.5, 16.5 | 4.0 × 10.5 |
+| Long ledge, east | 164.0, 28.5 | 6.5 × 27.0 |
+| East bars (×2) | 160.5 / 166.5, 56.5 | 3.5 / 4.0 × 18.0 |
+| East pad | 171.5, 59.0 | 8.0 × 11.5 |
+| North-east slab | 184.5, 17.0 | 17.0 × 10.5 |
+| Roofed shelter | 174.0, 36.0 | 21.5 × 19.0 |
+| Bowl, coping | — | 46.8 × 33.0 overall |
 
-## What the ground photos confirmed
+## Registration
 
-- The dark rectangle on the east is the **green-roofed shelter**. Drawn hatched.
-- The north edge of the plaza is a **bank/quarter-pipe run with a raised deck
-  and railing**, not a flat box. Drawn with a transition line along its high edge.
-- The centre group is a **long flat rail, a box, and a triangular (wedge) ledge** —
-  the rail west and south of the box, the wedge north of it, matching the
-  photos. Each is now one clean shape.
-- Cam A is marked south of the pad at x ≈ 41 m, looking north up the centre.
+`_trace-verification.png` renders the plan back into the satellite frame over
+the source image.
 
-## Cleanup applied in this pass
-
-- Rebuilt in metres rather than screen pixels; every dimension rounded to 0.25 m
-- Straightened the north pad edge (measured 0.20–0.68 m of wander) to y = 0.50
-- Straightened the south edge of the west slab to a single line
-- Regularised the bowl: parallel top/bottom edges, equal corner radii, one clean
-  deep-end lobe, and a constant 1.5 m transition inset for the floor
-- Collapsed each pair of parallel bands in the centre into the single object it
-  actually is — the second band of each pair is that object's shadow
-- Merged collinear fragments (two N–S ledge segments into one 10 m ledge; two
-  north-band fragments into one bank)
-- Removed all overlaps; the build fails if any are reintroduced
-- Rails now draw as rails (centreline + end posts), banks as banks, the wedge
-  with a ridge line, rather than everything being a plain box
-
-Nothing was moved. `_trace-verification.png` shows the cleaned linework
-rendered back into the satellite frame, over the source image.
+**One deliberate departure:** the long E–W rail is now centred on the box, per
+your note. It therefore no longer sits on the dark band I originally traced it
+from, about 22 ft further west. Either that band is a seam or shadow rather than
+the rail, or the rail has moved since the imagery. Everything else still
+registers.
 
 ## Still uncertain
 
 - Obstacle **heights and transitions** are invisible from overhead and are not
-  drawn. The wedge's high end is set east from photo 5; confirm.
+  drawn. If you want them, a numbered key is the way, not plan linework.
+- The wedge's high end is set east, read off the yellow "?" cap in your photo.
 - The dashed rectangle south-west of the plaza is a separate reddish object on
   dirt, off the concrete. Still unidentified.
 - The north-east corner sits under the map label in the source and is interpolated.
@@ -95,10 +108,10 @@ rendered back into the satellite frame, over the source image.
 
 ```sh
 pip install opencv-python-headless numpy pillow cairosvg
-python3 final.py <output-dir>     # build the four variants
-python3 verify.py                 # re-render over the satellite to check registration
+python3 final.py <output-dir>     # build all five variants
+python3 verify.py                 # registration check against the satellite
 ```
 
-- `geom.py` — all plan geometry, in metres
-- `final.py` — canvas layout, drawing conventions, export, overlap assertion
-- `verify.py` — registration check against the source satellite
+- `geom.py` — plan geometry, cameras and band positions, all in feet
+- `final.py` — canvas layout, icons, drawing conventions, export, assertions
+- `verify.py` — registration check
