@@ -1,0 +1,228 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="840" viewBox="0 0 1560 840">
+<style>
+ text { font-family:'Helvetica Neue',Helvetica,Arial,'Liberation Sans',sans-serif; fill:#000 }
+ .h1 { font-size:21px; font-weight:700; letter-spacing:3px }
+ .h2 { font-size:12.5px; letter-spacing:1.6px }
+ .lbl{ font-size:12.5px; letter-spacing:1.3px }
+ .warn{ font-size:12.5px; letter-spacing:1.3px; font-weight:700 }
+ .ttl{ font-size:25px; font-weight:700; letter-spacing:4.5px }
+ .sub{ font-size:13px; letter-spacing:1.8px }
+ .shade { fill:#000; fill-opacity:0.10; stroke:none }
+ .ray   { stroke:#000; stroke-width:1.9; stroke-dasharray:9 6 }
+ .ray2  { stroke:#000; stroke-width:0.9; stroke-dasharray:4 7; stroke-opacity:0.55 }
+ .ground{ stroke:#000; stroke-width:2.6 }
+ .hatch { stroke:#000; stroke-width:1 }
+ .frame { fill:#fff; stroke:#000; stroke-width:2.6 }
+ .stand { stroke:#000; stroke-width:1.6; stroke-dasharray:5 5 }
+ .shaded{ fill:#fff; stroke:#000; stroke-width:2.2 }
+ .sunlit{ fill:#000; stroke:#000; stroke-width:2.2 }
+ .dim   { stroke:#000; stroke-width:1.6 }
+ .dim2  { stroke:#000; stroke-width:1.6; stroke-dasharray:7 5 }
+</style>
+<rect width="1560" height="840" fill="#fff"/>
+<text x="70" y="46" class="ttl">WHY THE 20 x 20 RUNS OUT</text>
+<text x="70" y="70" class="sub">SECTION LOOKING ALONG THE CAMERA AXIS &#183; SUN FROM CAMERA LEFT &#183; 26 OCT 2026 &#183; BOTH AXES TO SCALE</text>
+<text x="70.0" y="116" class="h1">2 PM &#183; SUN 48.7&#176;</text>
+  <text x="70.0" y="137" class="h2">TOP RAIL 25 FT &#183; BOTTOM RAIL 5 FT</text>
+  <polygon class="shade" points="70.0,527.9 70.0,167.9 465.7,618.0 149.2,618.0"/>
+  <line class="ray" x1="70.0" y1="167.9" x2="465.7" y2="618.0"/>
+  <line class="ray" x1="70.0" y1="527.9" x2="149.2" y2="618.0"/>
+  <line class="ray2" x1="178.0" y1="150.0" x2="589.4" y2="618.0"/>
+  <line class="ray2" x1="304.0" y1="150.0" x2="715.4" y2="618.0"/>
+  <line class="ray2" x1="430.0" y1="150.0" x2="718.0" y2="477.6"/>
+  <line class="ground" x1="70.0" y1="618.0" x2="718.0" y2="618.0"/>
+  <line class="hatch" x1="70.0" y1="618.0" x2="63.0" y2="628.0"/>
+  <line class="hatch" x1="79.0" y1="618.0" x2="72.0" y2="628.0"/>
+  <line class="hatch" x1="88.0" y1="618.0" x2="81.0" y2="628.0"/>
+  <line class="hatch" x1="97.0" y1="618.0" x2="90.0" y2="628.0"/>
+  <line class="hatch" x1="106.0" y1="618.0" x2="99.0" y2="628.0"/>
+  <line class="hatch" x1="115.0" y1="618.0" x2="108.0" y2="628.0"/>
+  <line class="hatch" x1="124.0" y1="618.0" x2="117.0" y2="628.0"/>
+  <line class="hatch" x1="133.0" y1="618.0" x2="126.0" y2="628.0"/>
+  <line class="hatch" x1="142.0" y1="618.0" x2="135.0" y2="628.0"/>
+  <line class="hatch" x1="151.0" y1="618.0" x2="144.0" y2="628.0"/>
+  <line class="hatch" x1="160.0" y1="618.0" x2="153.0" y2="628.0"/>
+  <line class="hatch" x1="169.0" y1="618.0" x2="162.0" y2="628.0"/>
+  <line class="hatch" x1="178.0" y1="618.0" x2="171.0" y2="628.0"/>
+  <line class="hatch" x1="187.0" y1="618.0" x2="180.0" y2="628.0"/>
+  <line class="hatch" x1="196.0" y1="618.0" x2="189.0" y2="628.0"/>
+  <line class="hatch" x1="205.0" y1="618.0" x2="198.0" y2="628.0"/>
+  <line class="hatch" x1="214.0" y1="618.0" x2="207.0" y2="628.0"/>
+  <line class="hatch" x1="223.0" y1="618.0" x2="216.0" y2="628.0"/>
+  <line class="hatch" x1="232.0" y1="618.0" x2="225.0" y2="628.0"/>
+  <line class="hatch" x1="241.0" y1="618.0" x2="234.0" y2="628.0"/>
+  <line class="hatch" x1="250.0" y1="618.0" x2="243.0" y2="628.0"/>
+  <line class="hatch" x1="259.0" y1="618.0" x2="252.0" y2="628.0"/>
+  <line class="hatch" x1="268.0" y1="618.0" x2="261.0" y2="628.0"/>
+  <line class="hatch" x1="277.0" y1="618.0" x2="270.0" y2="628.0"/>
+  <line class="hatch" x1="286.0" y1="618.0" x2="279.0" y2="628.0"/>
+  <line class="hatch" x1="295.0" y1="618.0" x2="288.0" y2="628.0"/>
+  <line class="hatch" x1="304.0" y1="618.0" x2="297.0" y2="628.0"/>
+  <line class="hatch" x1="313.0" y1="618.0" x2="306.0" y2="628.0"/>
+  <line class="hatch" x1="322.0" y1="618.0" x2="315.0" y2="628.0"/>
+  <line class="hatch" x1="331.0" y1="618.0" x2="324.0" y2="628.0"/>
+  <line class="hatch" x1="340.0" y1="618.0" x2="333.0" y2="628.0"/>
+  <line class="hatch" x1="349.0" y1="618.0" x2="342.0" y2="628.0"/>
+  <line class="hatch" x1="358.0" y1="618.0" x2="351.0" y2="628.0"/>
+  <line class="hatch" x1="367.0" y1="618.0" x2="360.0" y2="628.0"/>
+  <line class="hatch" x1="376.0" y1="618.0" x2="369.0" y2="628.0"/>
+  <line class="hatch" x1="385.0" y1="618.0" x2="378.0" y2="628.0"/>
+  <line class="hatch" x1="394.0" y1="618.0" x2="387.0" y2="628.0"/>
+  <line class="hatch" x1="403.0" y1="618.0" x2="396.0" y2="628.0"/>
+  <line class="hatch" x1="412.0" y1="618.0" x2="405.0" y2="628.0"/>
+  <line class="hatch" x1="421.0" y1="618.0" x2="414.0" y2="628.0"/>
+  <line class="hatch" x1="430.0" y1="618.0" x2="423.0" y2="628.0"/>
+  <line class="hatch" x1="439.0" y1="618.0" x2="432.0" y2="628.0"/>
+  <line class="hatch" x1="448.0" y1="618.0" x2="441.0" y2="628.0"/>
+  <line class="hatch" x1="457.0" y1="618.0" x2="450.0" y2="628.0"/>
+  <line class="hatch" x1="466.0" y1="618.0" x2="459.0" y2="628.0"/>
+  <line class="hatch" x1="475.0" y1="618.0" x2="468.0" y2="628.0"/>
+  <line class="hatch" x1="484.0" y1="618.0" x2="477.0" y2="628.0"/>
+  <line class="hatch" x1="493.0" y1="618.0" x2="486.0" y2="628.0"/>
+  <line class="hatch" x1="502.0" y1="618.0" x2="495.0" y2="628.0"/>
+  <line class="hatch" x1="511.0" y1="618.0" x2="504.0" y2="628.0"/>
+  <line class="hatch" x1="520.0" y1="618.0" x2="513.0" y2="628.0"/>
+  <line class="hatch" x1="529.0" y1="618.0" x2="522.0" y2="628.0"/>
+  <line class="hatch" x1="538.0" y1="618.0" x2="531.0" y2="628.0"/>
+  <line class="hatch" x1="547.0" y1="618.0" x2="540.0" y2="628.0"/>
+  <line class="hatch" x1="556.0" y1="618.0" x2="549.0" y2="628.0"/>
+  <line class="hatch" x1="565.0" y1="618.0" x2="558.0" y2="628.0"/>
+  <line class="hatch" x1="574.0" y1="618.0" x2="567.0" y2="628.0"/>
+  <line class="hatch" x1="583.0" y1="618.0" x2="576.0" y2="628.0"/>
+  <line class="hatch" x1="592.0" y1="618.0" x2="585.0" y2="628.0"/>
+  <line class="hatch" x1="601.0" y1="618.0" x2="594.0" y2="628.0"/>
+  <line class="hatch" x1="610.0" y1="618.0" x2="603.0" y2="628.0"/>
+  <line class="hatch" x1="619.0" y1="618.0" x2="612.0" y2="628.0"/>
+  <line class="hatch" x1="628.0" y1="618.0" x2="621.0" y2="628.0"/>
+  <line class="hatch" x1="637.0" y1="618.0" x2="630.0" y2="628.0"/>
+  <line class="hatch" x1="646.0" y1="618.0" x2="639.0" y2="628.0"/>
+  <line class="hatch" x1="655.0" y1="618.0" x2="648.0" y2="628.0"/>
+  <line class="hatch" x1="664.0" y1="618.0" x2="657.0" y2="628.0"/>
+  <line class="hatch" x1="673.0" y1="618.0" x2="666.0" y2="628.0"/>
+  <line class="hatch" x1="682.0" y1="618.0" x2="675.0" y2="628.0"/>
+  <line class="hatch" x1="691.0" y1="618.0" x2="684.0" y2="628.0"/>
+  <line class="hatch" x1="700.0" y1="618.0" x2="693.0" y2="628.0"/>
+  <line class="hatch" x1="709.0" y1="618.0" x2="702.0" y2="628.0"/>
+  <rect class="frame" x="65.0" y="167.9" width="10" height="360.0"/>
+  <line class="stand" x1="70.0" y1="527.9" x2="70.0" y2="618.0"/>
+  <text x="50.0" y="347.9" class="lbl" text-anchor="end" transform="rotate(-90 50.0 347.9)">20 x 20 DIFFUSION</text>
+  <rect class="shaded" x="135.7" y="517.2" width="27.0" height="100.8" rx="6"/>
+  <circle class="shaded" cx="149.2" cy="504.6" r="12.6"/>
+  <text x="149.2" y="646.0" class="lbl" text-anchor="middle">NEAR</text>
+  <text x="149.2" y="663.0" class="lbl" text-anchor="middle">SHADED</text>
+  <rect class="sunlit" x="495.7" y="517.2" width="27.0" height="100.8" rx="6"/>
+  <circle class="sunlit" cx="509.2" cy="504.6" r="12.6"/>
+  <text x="509.2" y="646.0" class="lbl" text-anchor="middle">FAR</text>
+  <text x="509.2" y="663.0" class="warn" text-anchor="middle">IN SUN</text>
+  <line class="dim" x1="149.2" y1="696.0" x2="354.9" y2="696.0"/>
+  <line class="dim" x1="149.2" y1="689.0" x2="149.2" y2="703.0"/>
+  <line class="dim" x1="354.9" y1="689.0" x2="354.9" y2="703.0"/>
+  <text x="252.0" y="716.0" class="lbl" text-anchor="middle">SHADE STRIPE 11.4 FT</text>
+  <line class="dim2" x1="149.2" y1="746.0" x2="509.2" y2="746.0"/>
+  <line class="dim2" x1="149.2" y1="739.0" x2="149.2" y2="753.0"/>
+  <line class="dim2" x1="509.2" y1="739.0" x2="509.2" y2="753.0"/>
+  <text x="329.2" y="767.0" class="warn" text-anchor="middle">BAND 20 FT &#8212; 11.4 FT COVERED</text>
+  <text x="818.0" y="116" class="h1">4 PM &#183; SUN 25.3&#176;</text>
+  <text x="818.0" y="137" class="h2">TOP RAIL 22 FT &#183; BOTTOM RAIL 2 FT</text>
+  <polygon class="shade" points="818.0,580.6 818.0,220.6 1466.0,526.3 1466.0,618.0 897.2,618.0"/>
+  <line class="ray" x1="818.0" y1="220.6" x2="1466.0" y2="526.3"/>
+  <line class="ray" x1="818.0" y1="580.6" x2="897.2" y2="618.0"/>
+  <line class="ray2" x1="926.0" y1="150.0" x2="1466.0" y2="404.7"/>
+  <line class="ray2" x1="1052.0" y1="150.0" x2="1466.0" y2="345.3"/>
+  <line class="ray2" x1="1178.0" y1="150.0" x2="1466.0" y2="285.9"/>
+  <line class="ground" x1="818.0" y1="618.0" x2="1466.0" y2="618.0"/>
+  <line class="hatch" x1="818.0" y1="618.0" x2="811.0" y2="628.0"/>
+  <line class="hatch" x1="827.0" y1="618.0" x2="820.0" y2="628.0"/>
+  <line class="hatch" x1="836.0" y1="618.0" x2="829.0" y2="628.0"/>
+  <line class="hatch" x1="845.0" y1="618.0" x2="838.0" y2="628.0"/>
+  <line class="hatch" x1="854.0" y1="618.0" x2="847.0" y2="628.0"/>
+  <line class="hatch" x1="863.0" y1="618.0" x2="856.0" y2="628.0"/>
+  <line class="hatch" x1="872.0" y1="618.0" x2="865.0" y2="628.0"/>
+  <line class="hatch" x1="881.0" y1="618.0" x2="874.0" y2="628.0"/>
+  <line class="hatch" x1="890.0" y1="618.0" x2="883.0" y2="628.0"/>
+  <line class="hatch" x1="899.0" y1="618.0" x2="892.0" y2="628.0"/>
+  <line class="hatch" x1="908.0" y1="618.0" x2="901.0" y2="628.0"/>
+  <line class="hatch" x1="917.0" y1="618.0" x2="910.0" y2="628.0"/>
+  <line class="hatch" x1="926.0" y1="618.0" x2="919.0" y2="628.0"/>
+  <line class="hatch" x1="935.0" y1="618.0" x2="928.0" y2="628.0"/>
+  <line class="hatch" x1="944.0" y1="618.0" x2="937.0" y2="628.0"/>
+  <line class="hatch" x1="953.0" y1="618.0" x2="946.0" y2="628.0"/>
+  <line class="hatch" x1="962.0" y1="618.0" x2="955.0" y2="628.0"/>
+  <line class="hatch" x1="971.0" y1="618.0" x2="964.0" y2="628.0"/>
+  <line class="hatch" x1="980.0" y1="618.0" x2="973.0" y2="628.0"/>
+  <line class="hatch" x1="989.0" y1="618.0" x2="982.0" y2="628.0"/>
+  <line class="hatch" x1="998.0" y1="618.0" x2="991.0" y2="628.0"/>
+  <line class="hatch" x1="1007.0" y1="618.0" x2="1000.0" y2="628.0"/>
+  <line class="hatch" x1="1016.0" y1="618.0" x2="1009.0" y2="628.0"/>
+  <line class="hatch" x1="1025.0" y1="618.0" x2="1018.0" y2="628.0"/>
+  <line class="hatch" x1="1034.0" y1="618.0" x2="1027.0" y2="628.0"/>
+  <line class="hatch" x1="1043.0" y1="618.0" x2="1036.0" y2="628.0"/>
+  <line class="hatch" x1="1052.0" y1="618.0" x2="1045.0" y2="628.0"/>
+  <line class="hatch" x1="1061.0" y1="618.0" x2="1054.0" y2="628.0"/>
+  <line class="hatch" x1="1070.0" y1="618.0" x2="1063.0" y2="628.0"/>
+  <line class="hatch" x1="1079.0" y1="618.0" x2="1072.0" y2="628.0"/>
+  <line class="hatch" x1="1088.0" y1="618.0" x2="1081.0" y2="628.0"/>
+  <line class="hatch" x1="1097.0" y1="618.0" x2="1090.0" y2="628.0"/>
+  <line class="hatch" x1="1106.0" y1="618.0" x2="1099.0" y2="628.0"/>
+  <line class="hatch" x1="1115.0" y1="618.0" x2="1108.0" y2="628.0"/>
+  <line class="hatch" x1="1124.0" y1="618.0" x2="1117.0" y2="628.0"/>
+  <line class="hatch" x1="1133.0" y1="618.0" x2="1126.0" y2="628.0"/>
+  <line class="hatch" x1="1142.0" y1="618.0" x2="1135.0" y2="628.0"/>
+  <line class="hatch" x1="1151.0" y1="618.0" x2="1144.0" y2="628.0"/>
+  <line class="hatch" x1="1160.0" y1="618.0" x2="1153.0" y2="628.0"/>
+  <line class="hatch" x1="1169.0" y1="618.0" x2="1162.0" y2="628.0"/>
+  <line class="hatch" x1="1178.0" y1="618.0" x2="1171.0" y2="628.0"/>
+  <line class="hatch" x1="1187.0" y1="618.0" x2="1180.0" y2="628.0"/>
+  <line class="hatch" x1="1196.0" y1="618.0" x2="1189.0" y2="628.0"/>
+  <line class="hatch" x1="1205.0" y1="618.0" x2="1198.0" y2="628.0"/>
+  <line class="hatch" x1="1214.0" y1="618.0" x2="1207.0" y2="628.0"/>
+  <line class="hatch" x1="1223.0" y1="618.0" x2="1216.0" y2="628.0"/>
+  <line class="hatch" x1="1232.0" y1="618.0" x2="1225.0" y2="628.0"/>
+  <line class="hatch" x1="1241.0" y1="618.0" x2="1234.0" y2="628.0"/>
+  <line class="hatch" x1="1250.0" y1="618.0" x2="1243.0" y2="628.0"/>
+  <line class="hatch" x1="1259.0" y1="618.0" x2="1252.0" y2="628.0"/>
+  <line class="hatch" x1="1268.0" y1="618.0" x2="1261.0" y2="628.0"/>
+  <line class="hatch" x1="1277.0" y1="618.0" x2="1270.0" y2="628.0"/>
+  <line class="hatch" x1="1286.0" y1="618.0" x2="1279.0" y2="628.0"/>
+  <line class="hatch" x1="1295.0" y1="618.0" x2="1288.0" y2="628.0"/>
+  <line class="hatch" x1="1304.0" y1="618.0" x2="1297.0" y2="628.0"/>
+  <line class="hatch" x1="1313.0" y1="618.0" x2="1306.0" y2="628.0"/>
+  <line class="hatch" x1="1322.0" y1="618.0" x2="1315.0" y2="628.0"/>
+  <line class="hatch" x1="1331.0" y1="618.0" x2="1324.0" y2="628.0"/>
+  <line class="hatch" x1="1340.0" y1="618.0" x2="1333.0" y2="628.0"/>
+  <line class="hatch" x1="1349.0" y1="618.0" x2="1342.0" y2="628.0"/>
+  <line class="hatch" x1="1358.0" y1="618.0" x2="1351.0" y2="628.0"/>
+  <line class="hatch" x1="1367.0" y1="618.0" x2="1360.0" y2="628.0"/>
+  <line class="hatch" x1="1376.0" y1="618.0" x2="1369.0" y2="628.0"/>
+  <line class="hatch" x1="1385.0" y1="618.0" x2="1378.0" y2="628.0"/>
+  <line class="hatch" x1="1394.0" y1="618.0" x2="1387.0" y2="628.0"/>
+  <line class="hatch" x1="1403.0" y1="618.0" x2="1396.0" y2="628.0"/>
+  <line class="hatch" x1="1412.0" y1="618.0" x2="1405.0" y2="628.0"/>
+  <line class="hatch" x1="1421.0" y1="618.0" x2="1414.0" y2="628.0"/>
+  <line class="hatch" x1="1430.0" y1="618.0" x2="1423.0" y2="628.0"/>
+  <line class="hatch" x1="1439.0" y1="618.0" x2="1432.0" y2="628.0"/>
+  <line class="hatch" x1="1448.0" y1="618.0" x2="1441.0" y2="628.0"/>
+  <line class="hatch" x1="1457.0" y1="618.0" x2="1450.0" y2="628.0"/>
+  <rect class="frame" x="813.0" y="220.6" width="10" height="360.0"/>
+  <line class="stand" x1="818.0" y1="580.6" x2="818.0" y2="618.0"/>
+  <text x="798.0" y="400.6" class="lbl" text-anchor="end" transform="rotate(-90 798.0 400.6)">20 x 20 DIFFUSION</text>
+  <rect class="shaded" x="883.7" y="517.2" width="27.0" height="100.8" rx="6"/>
+  <circle class="shaded" cx="897.2" cy="504.6" r="12.6"/>
+  <text x="897.2" y="646.0" class="lbl" text-anchor="middle">NEAR</text>
+  <text x="897.2" y="663.0" class="lbl" text-anchor="middle">SHADED</text>
+  <rect class="shaded" x="1243.7" y="517.2" width="27.0" height="100.8" rx="6"/>
+  <circle class="shaded" cx="1257.2" cy="504.6" r="12.6"/>
+  <text x="1257.2" y="646.0" class="lbl" text-anchor="middle">FAR</text>
+  <text x="1257.2" y="663.0" class="lbl" text-anchor="middle">SHADED</text>
+  <line class="dim" x1="1229.2" y1="427.8" x2="1285.2" y2="427.8"/>
+  <text x="1291.2" y="432.8" class="lbl">SHADE TOP 10.6 FT</text>
+  <line class="dim" x1="897.2" y1="696.0" x2="1393.3" y2="696.0"/>
+  <line class="dim" x1="897.2" y1="689.0" x2="897.2" y2="703.0"/>
+  <line class="dim" x1="1393.3" y1="689.0" x2="1393.3" y2="703.0"/>
+  <text x="1145.2" y="716.0" class="lbl" text-anchor="middle">SHADE STRIPE 27.6 FT</text>
+  <line class="dim2" x1="897.2" y1="746.0" x2="1257.2" y2="746.0"/>
+  <line class="dim2" x1="897.2" y1="739.0" x2="897.2" y2="753.0"/>
+  <line class="dim2" x1="1257.2" y1="739.0" x2="1257.2" y2="753.0"/>
+  <text x="1077.2" y="767.0" class="lbl" text-anchor="middle">BAND 20 FT &#8212; 20.0 FT COVERED</text>
+<text x="70" y="820" class="sub">STRIPE WIDTH = (FRAME HEIGHT &#8722; PERFORMER HEIGHT) &#247; TAN(SUN ALTITUDE). RAIL HEIGHT SLIDES THE STRIPE, IT NEVER WIDENS IT.</text>
+</svg>
