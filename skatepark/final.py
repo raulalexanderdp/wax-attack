@@ -8,7 +8,7 @@ S = (W - 2*MARGIN_X) / G.PAD_L            # canvas px per foot
 PARK_H = G.PAD_D * S
 TX = f"translate({MARGIN_X},{TOP}) scale({S:.5f})"
 
-CAM_SCALE, BAND_SCALE = 0.5, 0.5
+CAM_SCALE, BAND_SCALE = 0.5, 0.40
 LENS_OFFSET = 46 * CAM_SCALE              # icon origin -> front of lens, canvas px
 
 def w(px): return round(px / S, 4)
@@ -145,12 +145,14 @@ def cameras():
 
 def band():
     x, y, ww, hh = G.PERF_AREA
-    base = cy(y + hh) + 16
     o = [f'<rect class="perf" x="{cx(x):.1f}" y="{cy(y):.1f}" width="{ww*S:.1f}" height="{hh*S:.1f}"/>']
-    for bx, by, rot, label, row in G.BAND:
+    nx, ny, ntext = G.BAND_NOTE
+    o.append(f'<text x="{cx(nx):.1f}" y="{cy(ny):.1f}" class="note">{ntext}</text>')
+    for bx, by, rot, label, (ldx, ldy) in G.BAND:
         o.append(f'<g class="icon" transform="translate({cx(bx):.1f},{cy(by):.1f}) rotate({rot}) '
                  f'scale({BAND_SCALE})"><use href="#person"/></g>')
-        o.append(f'<text x="{cx(bx):.1f}" y="{base + row*16:.1f}" class="bandtag" text-anchor="middle">{label}</text>')
+        o.append(f'<text x="{cx(bx+ldx):.1f}" y="{cy(by+ldy):.1f}" class="bandtag" '
+                 f'text-anchor="middle">{label}</text>')
     return "\n    ".join(o)
 
 # -------------------------------------------------------------- sun / compass

@@ -52,13 +52,13 @@
     <rect x="-9" y="3" width="15" height="21" rx="2"/>
     <line x1="-6" y1="19" x2="0" y2="19" stroke-width="4.00"/>
     <rect x="-15" y="31" width="30" height="9" rx="1.5"/>
-    <rect x="-12" y="40" width="24" height="8" rx="1.5"/></g><g id="person" stroke-width="4.80">
-    <ellipse cx="0" cy="0" rx="30" ry="12" stroke-width="5.60"/>
-    <ellipse cx="-21" cy="0" rx="2.6" ry="6" stroke-width="4.00"/>
-    <ellipse cx="21" cy="0" rx="2.6" ry="6" stroke-width="4.00"/>
-    <circle cx="0" cy="-2" r="16" fill="#000" stroke-width="4.80"/>
-    <path d="M -15.2,3 A 16,16 0 0 0 15.2,3 Z" fill="#fff" stroke-width="4.80"/>
-    <path d="M -5.5,12.5 L 0,19 L 5.5,12.5 Z" fill="#000" stroke-width="4.00"/></g>
+    <rect x="-12" y="40" width="24" height="8" rx="1.5"/></g><g id="person" stroke-width="6.00">
+    <ellipse cx="0" cy="0" rx="30" ry="12" stroke-width="7.00"/>
+    <ellipse cx="-21" cy="0" rx="2.6" ry="6" stroke-width="5.00"/>
+    <ellipse cx="21" cy="0" rx="2.6" ry="6" stroke-width="5.00"/>
+    <circle cx="0" cy="-2" r="16" fill="#000" stroke-width="6.00"/>
+    <path d="M -15.2,3 A 16,16 0 0 0 15.2,3 Z" fill="#fff" stroke-width="6.00"/>
+    <path d="M -5.5,12.5 L 0,19 L 5.5,12.5 Z" fill="#000" stroke-width="5.00"/></g>
   </defs>
   <rect width="1920" height="1080" fill="#fff"/>
   
@@ -119,15 +119,16 @@
     <circle class="key" cx="1089.5" cy="589.4" r="9.5"/><text x="1089.5" y="593.8" class="keynum" text-anchor="middle">3</text>
     <circle class="key" cx="1125.8" cy="546.4" r="9.5"/><text x="1125.8" y="550.8" class="keynum" text-anchor="middle">4</text>
     <circle class="key" cx="1511.1" cy="450.6" r="9.5"/><text x="1511.1" y="455.0" class="keynum" text-anchor="middle">5</text></g>
-  <g id="band"><rect class="perf" x="1043.3" y="624.4" width="303.9" height="54.2"/>
-    <g class="icon" transform="translate(1096.1,648.9) rotate(18) scale(0.5)"><use href="#person"/></g>
-    <text x="1096.1" y="710.6" class="bandtag" text-anchor="middle">GTR</text>
-    <g class="icon" transform="translate(1185.3,655.5) rotate(0) scale(0.5)"><use href="#person"/></g>
-    <text x="1185.3" y="694.6" class="bandtag" text-anchor="middle">VOX / GTR</text>
-    <g class="icon" transform="translate(1241.5,642.3) rotate(-8) scale(0.5)"><use href="#person"/></g>
-    <text x="1241.5" y="710.6" class="bandtag" text-anchor="middle">DRUMS</text>
-    <g class="icon" transform="translate(1300.9,648.9) rotate(-18) scale(0.5)"><use href="#person"/></g>
-    <text x="1300.9" y="694.6" class="bandtag" text-anchor="middle">BASS</text></g>
+  <g id="band"><rect class="perf" x="1153.9" y="620.5" width="92.5" height="54.8"/>
+    <text x="990.4" y="655.5" class="note">BAND 14 FT WIDE</text>
+    <g class="icon" transform="translate(1170.4,664.1) rotate(14) scale(0.4)"><use href="#person"/></g>
+    <text x="1140.7" y="664.1" class="bandtag" text-anchor="middle">GTR</text>
+    <g class="icon" transform="translate(1200.2,661.4) rotate(0) scale(0.4)"><use href="#person"/></g>
+    <text x="1200.2" y="648.2" class="bandtag" text-anchor="middle">VOX</text>
+    <g class="icon" transform="translate(1229.9,664.1) rotate(-14) scale(0.4)"><use href="#person"/></g>
+    <text x="1263.0" y="664.1" class="bandtag" text-anchor="middle">BASS</text>
+    <g class="icon" transform="translate(1200.2,629.7) rotate(0) scale(0.4)"><use href="#person"/></g>
+    <text x="1240.2" y="632.3" class="bandtag" text-anchor="middle">DRUMS</text></g>
   <g id="cameras"><path class="cone" d="M 1200.2,847.2 L 1105.0,662.0 L 1295.4,662.0 Z"/>
     <g class="icon" transform="translate(1200.2,870.2) rotate(0.0) scale(0.5)"><use href="#cam"/></g>
     <text x="1200.2" y="912.2" class="camtag" text-anchor="middle">CAM A</text>
@@ -145,7 +146,7 @@
     <text x="0" y="0"  class="title">VEGA BAJA SKATE PARK</text>
     <text x="0" y="26" class="sub">OVERHEAD LAYOUT BASE · PAGE UP = 332° (NNW)</text>
     <text x="0" y="50" class="sub">CORRE FORREST! &#183; SHOOT 26 OCT 2026</text>
-    <text x="0" y="70" class="note">REV 5 · 04 OCT 2026</text>
+    <text x="0" y="70" class="note">REV 6 · 16 OCT 2026</text>
     
     </g>
     <g transform="translate(1330,58)">

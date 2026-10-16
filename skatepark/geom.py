@@ -84,13 +84,25 @@ WEDGE_HIGH_END = 'east'
 # ------------------------------------------------------------------- staging
 # Band, "Layout 2 / semi-circle". Indicative - not surveyed.
 BAND_NAME = 'CORRE FORREST!'
+
+# Layout 2, compressed. Three across the front on a shallow arc opening toward
+# the camera, drums upstage centre. Centred on 137.75 ft, the line the box, the
+# long rail and Cam A already share.
+#
+# Width is set by the diffusion: a 20x20 covers at most 13.9 ft at 14:30, so the
+# players sit inside a 14 ft budget. Depth is set by the park - the long rail at
+# y 70.5 and the box at y 65-70 are fixed, so the band works the clear strip
+# between the rail and the south edge of the pad.
+#
+# x, y, facing (deg, 0 = square to camera), label, label offset (dx, dy) in ft
 BAND = [
-    (122.0, 75.5,  18, 'GTR',       1),
-    (135.5, 76.5,   0, 'VOX / GTR', 0),
-    (144.0, 74.5,  -8, 'DRUMS',     1),
-    (153.0, 75.5, -18, 'BASS',      0),
+    (133.25, 77.8,  14, 'GTR',   (-4.50,  0.0)),
+    (137.75, 77.4,   0, 'VOX',   ( 0.00, -2.0)),
+    (142.25, 77.8, -14, 'BASS',  ( 5.00,  0.0)),
+    (137.75, 72.6,   0, 'DRUMS', ( 6.05,  0.4)),
 ]
-PERF_AREA = (114.0, 71.8, 46.0, 8.2)
+BAND_NOTE = (106.0, 76.5, 'BAND 14 FT WIDE')
+PERF_AREA = (130.75, 71.2, 14.0, 8.3)      # the 14 ft the diffusion has to cover
 
 # Cameras: x, y, label, lens, horizontal FOV at the wide end (full frame),
 # target point, and which side the label sits.
@@ -105,7 +117,7 @@ CAMERAS = [
 PROJECT   = 'VEGA BAJA SKATE PARK'
 SUBTITLE  = 'OVERHEAD LAYOUT BASE \u00b7 PAGE UP = 332\u00b0 (NNW)'
 SHOOT     = '26 OCT 2026'
-REV       = 'REV 5 \u00b7 04 OCT 2026'
+REV       = 'REV 6 \u00b7 16 OCT 2026'
 SITE      = '18.445\u00b0N 66.388\u00b0W \u00b7 AST (UTC-4)'
 
 # The pad is not square to the compass. Measured by rotating the trace frame to
